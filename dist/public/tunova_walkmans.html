@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TUNOVA.IO - Walkmans Retro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #000000 0%, #1A0033 50%, #000000 100%);
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 2rem;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(57, 255, 20, 0.2);
+      border: 2px solid #39FF14;
+      color: #39FF14;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .back-button:hover {
+      background: rgba(57, 255, 20, 0.4);
+      transform: translateX(-5px);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .header h1 {
+      font-size: 3rem;
+      color: #39FF14;
+      text-shadow: 0 0 20px #39FF14;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.1em;
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
+    }
+
+    .walkmans-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 3rem;
+      padding: 2rem 0;
+    }
+
+    .walkman-section {
+      perspective: 1000px;
+    }
+
+    .walkman-card {
+      background: rgba(0, 0, 0, 0.8);
+      border: 3px solid;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 0 30px rgba(57, 255, 20, 0.3);
+      transition: all 0.3s ease;
+      transform-style: preserve-3d;
+    }
+
+    .walkman-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 50px rgba(57, 255, 20, 0.6);
+    }
+
+    /* VAH0M4N - Dorado/Crypto */
+    .walkman-vahoman {
+      border-color: #FFB900;
+      background: linear-gradient(135deg, rgba(255, 185, 0, 0.1) 0%, rgba(255, 140, 0, 0.1) 100%);
+    }
+
+    .vahoman-walkman {
+      background: linear-gradient(to br, #FFD700 0%, #FFC107 50%, #FF8C00 100%);
+      border: 4px solid #8B7500;
+      box-shadow: 0 8px 16px rgba(255, 140, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    }
+
+    .vahoman-label {
+      background: linear-gradient(135deg, #FFB900 0%, #FF8C00 100%);
+      color: #000;
+      border: 2px solid #8B7500;
+    }
+
+    /* NAKAMAS CREW - Púrpura/Magenta */
+    .walkman-nakamas {
+      border-color: #FF00FF;
+      background: linear-gradient(135deg, rgba(255, 0, 255, 0.1) 0%, rgba(157, 0, 255, 0.1) 100%);
+    }
+
+    .nakamas-walkman {
+      background: linear-gradient(to br, #9D00FF 0%, #FF00FF 50%, #E91E63 100%);
+      border: 4px solid #6B0080;
+      box-shadow: 0 8px 16px rgba(255, 0, 255, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    }
+
+    .nakamas-label {
+      background: linear-gradient(135deg, #9D00FF 0%, #FF00FF 100%);
+      color: #fff;
+      border: 2px solid #6B0080;
+    }
+
+    /* RAZA - Blanco/Plateado */
+    .walkman-raza {
+      border-color: #E5E5E5;
+      background: linear-gradient(135deg, rgba(229, 229, 229, 0.1) 0%, rgba(200, 200, 200, 0.1) 100%);
+    }
+
+    .raza-walkman {
+      background: linear-gradient(to br, #FFFFFF 0%, #E5E5E5 50%, #BDBDBD 100%);
+      border: 4px solid #808080;
+      box-shadow: 0 8px 16px rgba(200, 200, 200, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+    }
+
+    .raza-label {
+      background: linear-gradient(135deg, #FFFFFF 0%, #E5E5E5 100%);
+      color: #000;
+      border: 2px solid #808080;
+    }
+
+    /* AZAR - Cian/Negro */
+    .walkman-azar {
+      border-color: #00FFFF;
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    }
+
+    .azar-walkman {
+      background: linear-gradient(to br, #00FFFF 0%, #00BCD4 50%, #000000 100%);
+      border: 4px solid #004D4D;
+      box-shadow: 0 8px 16px rgba(0, 255, 255, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    }
+
+    .azar-label {
+      background: linear-gradient(135deg, #00FFFF 0%, #00BCD4 100%);
+      color: #000;
+      border: 2px solid #004D4D;
+    }
+
+    .walkman-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      letter-spacing: 0.1em;
+    }
+
+    .walkman-body {
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .walkman-header {
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .walkman-header-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.3rem;
+    }
+
+    .walkman-header-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .cassette-window {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 2px solid rgba(0, 0, 0, 0.5);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .cassette-label {
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      border: 2px solid rgba(0, 0, 0, 0.3);
+    }
+
+    .cassette-label-title {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      transform: rotate(-0.5deg);
+    }
+
+    .cassette-label-info {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Caveat', cursive;
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .reels-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .reel {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #333 0%, #111 100%);
+      border: 3px solid #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .reel.playing {
+      animation: spin 2s linear infinite;
+    }
+
+    .reel-center {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #222 0%, #000 100%);
+      border: 2px solid #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reel-hub {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #333;
+      border: 1px solid #222;
+    }
+
+    .reel-teeth {
+      position: absolute;
+      width: 2px;
+      height: 8px;
+      background: #555;
+      border-radius: 1px;
+    }
+
+    .tape {
+      flex: 1;
+      height: 3px;
+      background: linear-gradient(90deg, #8B6914 0%, #B8860B 50%, #8B6914 100%);
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tape.playing::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: slide 1s linear infinite;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      width: 45px;
+      height: 45px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    .control-btn.play {
+      width: 55px;
+      height: 55px;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #39FF14 0%, #2ecc71 100%);
+      color: black;
+      border-color: #39FF14;
+    }
+
+    .control-btn.play:hover {
+      box-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+    }
+
+    .playlist {
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(57, 255, 20, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .playlist-title {
+      color: #39FF14;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .playlist-item {
+      padding: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      margin-bottom: 0.3rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .playlist-item:hover {
+      background: rgba(57, 255, 20, 0.2);
+      border-color: #39FF14;
+    }
+
+    .playlist-item.active {
+      background: rgba(57, 255, 20, 0.3);
+      border-color: #39FF14;
+      font-weight: bold;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes slide {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .walkmans-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .control-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .control-btn.play {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="/tunova_con_radio_pirata.html" class="back-button">←</a>
+
+  <div class="header">
+    <h1>🎧 TUNOVA.IO</h1>
+    <p>Walkmans Retro - Colecciones Limitadas de Casetes</p>
+  </div>
+
+  <div class="walkmans-container">
+    <!-- VAH0M4N Walkman -->
+    <div class="walkman-section">
+      <div class="walkman-card walkman-vahoman">
+        <div class="walkman-title" style="color: #FFB900;">🎵 VAH0M4N</div>
+        
+        <div class="walkman-body vahoman-walkman">
+          <div class="walkman-header">
+            <div class="walkman-header-title" style="color: #000;">TUNOVA</div>
+            <div class="walkman-header-subtitle" style="color: #333;">STEREO CASSETTE PLAYER</div>
+          </div>
+
+          <div class="cassette-window">
+            <div class="cassette-label vahoman-label">
+              <div class="cassette-label-title">Rey de los Emprendedores</div>
+              <div class="cassette-label-info">
+                <span>Side A</span>
+                <span>C-90</span>
+              </div>
+            </div>
+
+            <div class="reels-container">
+              <div class="reel playing">
+                <div class="reel-center">
+                  <div class="reel-hub"></div>
+                </div>
+                <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+              </div>
+              <div class="tape playing"></div>
+              <div class="reel playing">
+                <div class="reel-center">
+                  <div class="reel-hub"></div>
+                </div>
+                <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="control-btn">⏮️</button>
+            <button class="control-btn play">▶️</button>
+            <button class="control-btn">⏭️</button>
+            <button class="control-btn">🔀</button>
+          </div>
+
+          <div class="playlist">
+            <div class="playlist-title">🎧 Tracks</div>
+            <div class="playlist-item active">Rey de los Emprendedores - 3:45</div>
+            <div class="playlist-item">Crypto Dreams - 4:12</div>
+            <div class="playlist-item">HODL Anthem - 3:58</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAKAMAS CREW Walkman -->
+    <div class="walkman-section">
+      <div class="walkman-card walkman-nakamas">
+        <div class="walkman-title" style="color: #FF00FF;">👾 NAKAMAS CREW</div>
+        
+        <div class="walkman-body nakamas-walkman">
+          <div class="walkman-header">
+            <div class="walkman-header-title" style="color: #fff;">TUNOVA</div>
+            <div class="walkman-header-subtitle" style="color: #ddd;">STEREO CASSETTE PLAYER</div>
+          </div>
+
+          <div class="cassette-window">
+            <div class="cassette-label nakamas-label">
+              <div class="cassette-label-title">Génesis Vol.1</div>
+              <div class="cassette-label-info">
+                <span>Side A</span>
+                <span>C-90</span>
+              </div>
+            </div>
+
+            <div class="reels-container">
+              <div class="reel playing">
+                <div class="reel-center">
+                  <div class="reel-hub"></div>
+                </div>
+                <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+              </div>
+              <div class="tape playing"></div>
+              <div class="reel playing">
+                <div class="reel-center">
+                  <div class="reel-hub"></div>
+                </div>
+                <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="control-btn">⏮️</button>
+            <button class="control-btn play">▶️</button>
+            <button class="control-btn">⏭️</button>
+            <button class="control-btn">🔀</button>
+          </div>
+
+          <div class="playlist">
+            <div class="playlist-title">🎧 Tracks</div>
+            <div class="playlist-item active">Track 1 - 4:12</div>
+            <div class="playlist-item">Track 2 - 3:58</div>
+            <div class="playlist-item">Track 3 - 4:30</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RAZA Walkman -->
+    <div class="walkman-section">
+      <div class="walkman-card walkman-raza">
+        <div class="walkman-title" style="color: #333;">🎨 RAZA</div>
+        
+        <div class="walkman-body raza-walkman">
+          <div class="walkman-header">
+            <div class="walkman-header-title" style="color: #000;">TUNOVA</div>
+            <div class="walkman-header-subtitle" style="color: #555;">STEREO CASSETTE PLAYER</div>
+          </div>
+
+          <div class="cassette-window">
+            <div class="cassette-label raza-label">
+              <div class="cassette-label-title">Brutalismo Elegante</div>
+              <div class="cassette-label-info">
+                <span>Side A</span>
+                <span>C-90</span>
+              </div>
+            </div>
+
+            <div class="reels-container">
+              <div class="reel playing">
+                <div class="reel-center">
+                  <div class="reel-hub"></div>
+                </div>
+                <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+              </div>
+              <div class="tape playing"></div>
+              <div class="reel playing">
+                <div class="reel-center">
+                  <div class="reel-hub"></div>
+                </div>
+                <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="control-btn">⏮️</button>
+            <button class="control-btn play">▶️</button>
+            <button class="control-btn">⏭️</button>
+            <button class="control-btn">🔀</button>
+          </div>
+
+          <div class="playlist">
+            <div class="playlist-title">🎧 Tracks</div>
+            <div class="playlist-item active">Brutalismo - 3:22</div>
+            <div class="playlist-item">Elegancia - 4:05</div>
+            <div class="playlist-item">Síntesis - 3:48</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AZAR Walkman -->
+    <div class="walkman-section">
+      <div class="walkman-card walkman-azar">
+        <div class="walkman-title" style="color: #00FFFF;">🌀 AZAR</div>
+        
+        <div class="walkman-body azar-walkman">
+          <div class="walkman-header">
+            <div class="walkman-header-title" style="color: #000;">TUNOVA</div>
+            <div class="walkman-header-subtitle" style="color: #333;">STEREO CASSETTE PLAYER</div>
+          </div>
+
+          <div class="cassette-window">
+            <div class="cassette-label azar-label">
+              <div class="cassette-label-title">La Dualidad</div>
+              <div class="cassette-label-info">
+                <span>Side A</span>
+                <span>C-90</span>
+              </div>
+            </div>
+
+            <div class="reels-container">
+              <div class="reel playing">
+                <div class="reel-center">
+                  <div class="reel-hub"></div>
+                </div>
+                <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+              </div>
+              <div class="tape playing"></div>
+              <div class="reel playing">
+                <div class="reel-center">
+                  <div class="reel-hub"></div>
+                </div>
+                <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="control-btn">⏮️</button>
+            <button class="control-btn play">▶️</button>
+            <button class="control-btn">⏭️</button>
+            <button class="control-btn">🔀</button>
+          </div>
+
+          <div class="playlist">
+            <div class="playlist-title">🎧 Tracks</div>
+            <div class="playlist-item active">Orden - 4:05</div>
+            <div class="playlist-item">Caos - 4:30</div>
+            <div class="playlist-item">Equilibrio - 3:48</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Agregar interactividad a los botones
+    document.querySelectorAll('.control-btn.play').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const walkmanBody = this.closest('.walkman-body');
+        const reels = walkmanBody.querySelectorAll('.reel');
+        const tape = walkmanBody.querySelector('.tape');
+        
+        reels.forEach(reel => reel.classList.toggle('playing'));
+        tape.classList.toggle('playing');
+        
+        this.textContent = reels[0].classList.contains('playing') ? '⏸️' : '▶️';
+      });
+    });
+
+    // Agregar interactividad a items de playlist
+    document.querySelectorAll('.playlist-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const playlist = this.closest('.playlist');
+        playlist.querySelectorAll('.playlist-item').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

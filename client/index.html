@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIDE OS Genesis - Portal de Entrada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            color: #fdf2e3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Estrellas de fondo */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #facc15;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #facc15, 0 0 40px #f59e0b;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px #facc15, 0 0 40px #f59e0b; }
+            50% { text-shadow: 0 0 30px #facc15, 0 0 60px #f59e0b, 0 0 80px #f59e0b; }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            color: #facc15;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #581c0d 0%, #7c2d12 100%);
+            border: 4px solid #facc15;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(250, 204, 21, 0.4), 0 10px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: #fdf2e3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 0 50px rgba(250, 204, 21, 0.8), 0 15px 30px rgba(0, 0, 0, 0.7);
+            border-color: #fff;
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px #facc15);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            text-align: center;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <div class="logo">🏴‍☠️ TIDE OS GENESIS ⚓</div>
+        <div class="subtitle">El Galeón Digital - Navegación Web3</div>
+
+        <div class="cards-container">
+            <a href="/nakama-os.html" class="card">
+                <div class="card-icon">🏴‍☠️</div>
+                <div class="card-title">NAKAMA OS</div>
+                <div class="card-description">
+                    Sistema Operativo Pirata<br>
+                    Edición Rey de los Piratas<br>
+                    <strong>¡Zarpa hacia la aventura!</strong>
+                </div>
+            </a>
+
+            <a href="/genesis_mint_platform.html" class="card">
+                <div class="card-icon">💎</div>
+                <div class="card-title">GENESIS MINT</div>
+                <div class="card-description">
+                    Plataforma de Minteo NFT<br>
+                    Casetes Limitados<br>
+                    <strong>¡Consigue tu tesoro!</strong>
+                </div>
+            </a>
+
+            <a href="/tunova_con_radio_pirata.html" class="card">
+                <div class="card-icon">📻</div>
+                <div class="card-title">TUNOVA.IO</div>
+                <div class="card-description">
+                    Plataforma Musical Web3<br>
+                    Radio Pirata Incluida<br>
+                    <strong>¡Escucha los hits!</strong>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        🏴‍☠️ Desarrollado con 💙 por TIDElabs | Mugiwaras Web3 🎹
+    </div>
+
+    <script>
+        // Generar estrellas aleatorias
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Konami Code Easter Egg
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.key);
+            if (konamiCode.length > 10) konamiCode.shift();
+            
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                alert('🏴‍☠️ ¡CÓDIGO NAKAMA ACTIVADO! ¡Eres un verdadero pirata! ⚓');
+                document.body.style.animation = 'rainbow 2s infinite';
+            }
+        });
+    </script>
+</body>
+</html>

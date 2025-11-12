@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TUNOVA.IO - Plataforma Musical Web3 + Radio Pirata</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #000000 0%, #1A0033 50%, #000000 100%);
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .header {
+      padding: 2rem 3rem;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid rgba(57, 255, 20, 0.3);
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: white;
+      text-shadow: 0 0 20px #39FF14, 0 0 40px #39FF14;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.05em;
+    }
+
+    .collections-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem 3rem;
+      background: rgba(0, 0, 0, 0.5);
+      flex-wrap: wrap;
+      position: sticky;
+      top: 120px;
+      z-index: 99;
+    }
+
+    .collection-btn {
+      padding: 1rem 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    .collection-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(57, 255, 20, 0.3);
+    }
+
+    .collection-btn.active {
+      border-color: #39FF14;
+      box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+    }
+
+    .collection-btn.vahoman { background: linear-gradient(135deg, #FFB900 0%, #FF8C00 100%); color: black; }
+    .collection-btn.nakamas { background: linear-gradient(135deg, #9D00FF 0%, #FF00FF 100%); }
+    .collection-btn.raza { background: linear-gradient(135deg, #FFFFFF 0%, #E5E5E5 100%); color: black; }
+    .collection-btn.azar { background: linear-gradient(135deg, #000000 0%, #00FFFF 100%); }
+    .collection-btn.radio { 
+      background: linear-gradient(135deg, #FF0000 0%, #FF6B00 100%); 
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
+    }
+
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .walkman-section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .walkman-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .walkman-display {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .walkman-image-container {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2rem;
+    }
+
+    .walkman-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 16px;
+    }
+
+    .walkman-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .walkman-title {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .walkman-title.vahoman { color: #FFB900; text-shadow: 0 0 20px #FFB900; }
+    .walkman-title.nakamas { color: #FF00FF; text-shadow: 0 0 20px #FF00FF; }
+    .walkman-title.raza { color: #FFFFFF; text-shadow: 0 0 20px #FFFFFF; }
+    .walkman-title.azar { color: #00FFFF; text-shadow: 0 0 20px #00FFFF; }
+    .walkman-title.radio { color: #FF0000; text-shadow: 0 0 20px #FF0000; }
+
+    .walkman-desc {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .collection-stats {
+      display: flex;
+      gap: 2rem;
+      padding: 1.5rem;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      border: 1px solid rgba(57, 255, 20, 0.3);
+    }
+
+    .stat {
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #39FF14;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cassettes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .cassette-card {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .cassette-card:hover {
+      border-color: #39FF14;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(57, 255, 20, 0.3);
+    }
+
+    .cassette-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .cassette-number {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .cassette-likes {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .like-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      transition: all 0.2s ease;
+      padding: 0.25rem;
+    }
+
+    .like-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .like-btn.liked {
+      animation: heartbeat 0.3s ease;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+
+    .like-count {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #39FF14;
+    }
+
+    .cassette-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+
+    .cassette-artist {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 1rem;
+    }
+
+    .cassette-duration {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 1rem;
+    }
+
+    .cassette-link-placeholder {
+      padding: 0.75rem;
+      background: rgba(57, 255, 20, 0.1);
+      border: 1px dashed rgba(57, 255, 20, 0.3);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      font-family: 'Courier New', monospace;
+    }
+
+    .cassette-link {
+      padding: 0.75rem;
+      background: rgba(57, 255, 20, 0.2);
+      border: 1px solid rgba(57, 255, 20, 0.5);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #39FF14;
+      text-decoration: none;
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    .cassette-link:hover {
+      background: rgba(57, 255, 20, 0.3);
+      transform: scale(1.02);
+    }
+
+    .radio-pirata-section {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.1) 0%, rgba(255, 107, 0, 0.1) 100%);
+      border: 2px solid rgba(255, 0, 0, 0.3);
+      border-radius: 24px;
+      padding: 3rem;
+      margin-top: 3rem;
+    }
+
+    .radio-pirata-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .radio-pirata-header h2 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #FF0000;
+      text-shadow: 0 0 20px #FF0000;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .radio-pirata-header p {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+    }
+
+    .radio-player {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .now-playing {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .now-playing-label {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .now-playing-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .now-playing-artist {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .radio-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .radio-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .radio-btn:hover {
+      background: rgba(255, 0, 0, 0.3);
+      border-color: #FF0000;
+      transform: scale(1.1);
+    }
+
+    .radio-btn.play-btn {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #FF0000 0%, #FF6B00 100%);
+      border-color: #FF0000;
+      font-size: 2rem;
+    }
+
+    .radio-playlist {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      padding: 1.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .radio-playlist h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #FF0000;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .radio-track {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .radio-track:hover {
+      background: rgba(255, 0, 0, 0.2);
+      transform: translateX(5px);
+    }
+
+    .radio-track.playing {
+      background: rgba(255, 0, 0, 0.3);
+      border: 1px solid #FF0000;
+    }
+
+    .radio-track-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #FF0000;
+      flex-shrink: 0;
+    }
+
+    .radio-track-info {
+      flex: 1;
+    }
+
+    .radio-track-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.25rem;
+    }
+
+    .radio-track-artist {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .radio-track-duration {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      flex-shrink: 0;
+    }
+
+    .external-playlists {
+      margin-top: 2rem;
+      padding: 2rem;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 16px;
+    }
+
+    .external-playlists h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #FF6B00;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+
+    .playlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .playlist-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 107, 0, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .playlist-card:hover {
+      border-color: #FF6B00;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3);
+    }
+
+    .playlist-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .playlist-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .playlist-desc {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 1rem;
+    }
+
+    .playlist-link {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 107, 0, 0.2);
+      border: 1px solid rgba(255, 107, 0, 0.5);
+      border-radius: 8px;
+      color: #FF6B00;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .playlist-link:hover {
+      background: rgba(255, 107, 0, 0.3);
+    }
+
+    .top-funded {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: rgba(57, 255, 20, 0.1);
+      border: 2px solid rgba(57, 255, 20, 0.3);
+      border-radius: 16px;
+    }
+
+    .top-funded h2 {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: #39FF14;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .top-funded-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .top-funded-item {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(57, 255, 20, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .rank-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFB900, #FF8C00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: black;
+      flex-shrink: 0;
+    }
+
+    .rank-badge.gold { background: linear-gradient(135deg, #FFD700, #FFA500); }
+    .rank-badge.silver { background: linear-gradient(135deg, #C0C0C0, #808080); }
+    .rank-badge.bronze { background: linear-gradient(135deg, #CD7F32, #8B4513); }
+
+    .rank-info {
+      flex: 1;
+    }
+
+    .rank-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.25rem;
+    }
+
+    .rank-collection {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 0.25rem;
+    }
+
+    .rank-likes {
+      font-size: 0.9rem;
+      color: #39FF14;
+      font-weight: 700;
+    }
+
+    .footer {
+      padding: 2rem 3rem;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-top: 2px solid rgba(57, 255, 20, 0.3);
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    .footer p {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.75rem; }
+      .walkman-display { grid-template-columns: 1fr; }
+      .walkman-title { font-size: 2rem; }
+      .collections-nav { padding: 1.5rem; }
+      .collection-btn { padding: 0.75rem 1.25rem; font-size: 0.85rem; }
+      .cassettes-grid { grid-template-columns: 1fr; }
+      .radio-pirata-header h2 { font-size: 1.75rem; }
+    }
+  
+    /* Walkmans Retro Inline */
+    .walkman-display-inline {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .walkman-body {
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .walkman-header {
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .walkman-header-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.3rem;
+    }
+
+    .walkman-header-subtitle {
+      font-size: 0.85rem;
+    }
+
+    .cassette-window {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 2px solid rgba(0, 0, 0, 0.5);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .cassette-label {
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      border: 2px solid rgba(0, 0, 0, 0.3);
+    }
+
+    .cassette-label-title {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      transform: rotate(-0.5deg);
+    }
+
+    .cassette-label-info {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Caveat', cursive;
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .reels-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .reel {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #333 0%, #111 100%);
+      border: 3px solid #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+
+    .reel.playing {
+      animation: spin 2s linear infinite;
+    }
+
+    .reel-center {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #222 0%, #000 100%);
+      border: 2px solid #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reel-hub {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #333;
+      border: 1px solid #222;
+    }
+
+    .reel-teeth {
+      position: absolute;
+      width: 2px;
+      height: 8px;
+      background: #555;
+      border-radius: 1px;
+    }
+
+    .tape {
+      flex: 1;
+      height: 3px;
+      background: linear-gradient(90deg, #8B6914 0%, #B8860B 50%, #8B6914 100%);
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tape.playing::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: slide 1s linear infinite;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      width: 45px;
+      height: 45px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    .control-btn.play {
+      width: 55px;
+      height: 55px;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #39FF14 0%, #2ecc71 100%);
+      color: black;
+      border-color: #39FF14;
+    }
+
+    .control-btn.play:hover {
+      box-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+    }
+
+    /* VAH0M4N - Dorado/Crypto */
+    .vahoman-walkman {
+      background: linear-gradient(to br, #FFD700 0%, #FFC107 50%, #FF8C00 100%);
+      border: 4px solid #8B7500;
+      box-shadow: 0 8px 16px rgba(255, 140, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    }
+
+    .vahoman-label {
+      background: linear-gradient(135deg, #FFB900 0%, #FF8C00 100%);
+      color: #000;
+      border: 2px solid #8B7500;
+    }
+
+    /* NAKAMAS CREW - Púrpura/Magenta */
+    .nakamas-walkman {
+      background: linear-gradient(to br, #9D00FF 0%, #FF00FF 50%, #E91E63 100%);
+      border: 4px solid #6B0080;
+      box-shadow: 0 8px 16px rgba(255, 0, 255, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    }
+
+    .nakamas-label {
+      background: linear-gradient(135deg, #9D00FF 0%, #FF00FF 100%);
+      color: #fff;
+      border: 2px solid #6B0080;
+    }
+
+    /* RAZA - Blanco/Plateado */
+    .raza-walkman {
+      background: linear-gradient(to br, #FFFFFF 0%, #E5E5E5 50%, #BDBDBD 100%);
+      border: 4px solid #808080;
+      box-shadow: 0 8px 16px rgba(200, 200, 200, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+    }
+
+    .raza-label {
+      background: linear-gradient(135deg, #FFFFFF 0%, #E5E5E5 100%);
+      color: #000;
+      border: 2px solid #808080;
+    }
+
+    /* AZAR - Cian/Negro */
+    .azar-walkman {
+      background: linear-gradient(to br, #00FFFF 0%, #00BCD4 50%, #000000 100%);
+      border: 4px solid #004D4D;
+      box-shadow: 0 8px 16px rgba(0, 255, 255, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    }
+
+    .azar-label {
+      background: linear-gradient(135deg, #00FFFF 0%, #00BCD4 100%);
+      color: #000;
+      border: 2px solid #004D4D;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes slide {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    </style>
+</head>
+<body>
+  <header class="header">
+    <div style="display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto;">
+      <a href="/" style="font-size: 2rem; color: #facc15; text-decoration: none; transition: transform 0.2s;" title="Volver al inicio" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">←</a>
+      <div style="flex-grow: 1; text-align: center;">
+        <h1>TUNOVA.IO</h1>
+        <p>Plataforma Musical Web3 + Radio Pirata 🏴‍☠️ Los más votados serán financiados para videoclips</p>
+      </div>
+      <div style="width: 2rem;"></div>
+    </div>
+  </header>
+
+  <nav class="collections-nav">
+    <button class="collection-btn vahoman active" onclick="showCollection('vahoman')">VAH0M4N</button>
+    <button class="collection-btn nakamas" onclick="showCollection('nakamas')">NAKAMAS CREW</button>
+    <button class="collection-btn raza" onclick="showCollection('raza')">RAZA</button>
+    <button class="collection-btn azar" onclick="showCollection('azar')">AZAR</button>
+    <button class="collection-btn radio" onclick="showCollection('radio')">📻 RADIO PIRATA</button>
+  </nav>
+
+  <main class="main-container">
+    <!-- VAH0M4N Collection -->
+    <section id="vahoman" class="walkman-section active">
+      <div class="walkman-display">
+        <div class="walkman-display-inline">
+          <div class="walkman-body vahoman-walkman" style="max-width: 400px; margin: 0 auto;">
+            <div class="walkman-header">
+              <div class="walkman-header-title" style="color: #000;">TUNOVA</div>
+              <div class="walkman-header-subtitle" style="color: #333;">STEREO CASSETTE PLAYER</div>
+            </div>
+            <div class="cassette-window">
+              <div class="cassette-label vahoman-label">
+                <div class="cassette-label-title">Rey de los Emprendedores</div>
+                <div class="cassette-label-info">
+                  <span>Side A</span>
+                  <span>C-90</span>
+                </div>
+              </div>
+              <div class="reels-container">
+                <div class="reel playing">
+                  <div class="reel-center"><div class="reel-hub"></div></div>
+                  <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+                </div>
+                <div class="tape playing"></div>
+                <div class="reel playing">
+                  <div class="reel-center"><div class="reel-hub"></div></div>
+                  <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+                </div>
+              </div>
+            </div>
+            <div class="controls">
+              <button class="control-btn">⏮️</button>
+              <button class="control-btn play">▶️</button>
+              <button class="control-btn">⏭️</button>
+              <button class="control-btn">🔀</button>
+            </div>
+          </div>
+        </div>
+        <div class="walkman-info">
+          <h2 class="walkman-title vahoman">VAH0M4N</h2>
+          <p class="walkman-desc">
+            Rey de los Emprendedores - Edición Español<br>
+            Walkman dorado premium con símbolos crypto integrados
+          </p>
+          <div class="collection-stats">
+            <div class="stat">
+              <span class="stat-value" id="vahoman-tracks">1</span>
+              <span class="stat-label">Tracks</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="vahoman-likes">0</span>
+              <span class="stat-label">Total Likes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cassettes-grid" id="vahoman-cassettes"></div>
+    </section>
+
+    <!-- NAKAMAS CREW Collection -->
+    <section id="nakamas" class="walkman-section">
+      <div class="walkman-display">
+        <div class="walkman-display-inline">
+          <div class="walkman-body nakamas-walkman" style="max-width: 400px; margin: 0 auto;">
+            <div class="walkman-header">
+              <div class="walkman-header-title" style="color: #fff;">TUNOVA</div>
+              <div class="walkman-header-subtitle" style="color: #ddd;">STEREO CASSETTE PLAYER</div>
+            </div>
+            <div class="cassette-window">
+              <div class="cassette-label nakamas-label">
+                <div class="cassette-label-title">Génesis Vol.1</div>
+                <div class="cassette-label-info">
+                  <span>Side A</span>
+                  <span>C-90</span>
+                </div>
+              </div>
+              <div class="reels-container">
+                <div class="reel playing">
+                  <div class="reel-center"><div class="reel-hub"></div></div>
+                  <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+                </div>
+                <div class="tape playing"></div>
+                <div class="reel playing">
+                  <div class="reel-center"><div class="reel-hub"></div></div>
+                  <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+                </div>
+              </div>
+            </div>
+            <div class="controls">
+              <button class="control-btn">⏮️</button>
+              <button class="control-btn play">▶️</button>
+              <button class="control-btn">⏭️</button>
+              <button class="control-btn">🔀</button>
+            </div>
+          </div>
+        </div>
+        <div class="walkman-info">
+          <h2 class="walkman-title nakamas">NAKAMAS CREW</h2>
+          <p class="walkman-desc">
+            Génesis Vol.1 - Compilado del Ecosistema<br>
+            12 artistas unidos - El éxito de uno es el éxito de todos
+          </p>
+          <div class="collection-stats">
+            <div class="stat">
+              <span class="stat-value" id="nakamas-tracks">12</span>
+              <span class="stat-label">Tracks</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="nakamas-likes">0</span>
+              <span class="stat-label">Total Likes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cassettes-grid" id="nakamas-cassettes"></div>
+    </section>
+
+    <!-- RAZA Collection -->
+    <section id="raza" class="walkman-section">
+      <div class="walkman-display">
+        <div class="walkman-display-inline">
+          <div class="walkman-body raza-walkman" style="max-width: 400px; margin: 0 auto;">
+            <div class="walkman-header">
+              <div class="walkman-header-title" style="color: #000;">TUNOVA</div>
+              <div class="walkman-header-subtitle" style="color: #555;">STEREO CASSETTE PLAYER</div>
+            </div>
+            <div class="cassette-window">
+              <div class="cassette-label raza-label">
+                <div class="cassette-label-title">Brutalismo Elegante</div>
+                <div class="cassette-label-info">
+                  <span>Side A</span>
+                  <span>C-90</span>
+                </div>
+              </div>
+              <div class="reels-container">
+                <div class="reel playing">
+                  <div class="reel-center"><div class="reel-hub"></div></div>
+                  <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+                </div>
+                <div class="tape playing"></div>
+                <div class="reel playing">
+                  <div class="reel-center"><div class="reel-hub"></div></div>
+                  <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+                </div>
+              </div>
+            </div>
+            <div class="controls">
+              <button class="control-btn">⏮️</button>
+              <button class="control-btn play">▶️</button>
+              <button class="control-btn">⏭️</button>
+              <button class="control-btn">🔀</button>
+            </div>
+          </div>
+        </div>
+        <div class="walkman-info">
+          <h2 class="walkman-title raza">RAZA</h2>
+          <p class="walkman-desc">
+            RazAzaR: La Dualidad de Tunova - Versión ORDEN<br>
+            Brutalismo Elegante - Minimalismo Estructurado
+          </p>
+          <div class="collection-stats">
+            <div class="stat">
+              <span class="stat-value" id="raza-tracks">1</span>
+              <span class="stat-label">Tracks</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="raza-likes">0</span>
+              <span class="stat-label">Total Likes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cassettes-grid" id="raza-cassettes"></div>
+    </section>
+
+    <!-- AZAR Collection -->
+    <section id="azar" class="walkman-section">
+      <div class="walkman-display">
+        <div class="walkman-display-inline">
+          <div class="walkman-body azar-walkman" style="max-width: 400px; margin: 0 auto;">
+            <div class="walkman-header">
+              <div class="walkman-header-title" style="color: #000;">TUNOVA</div>
+              <div class="walkman-header-subtitle" style="color: #333;">STEREO CASSETTE PLAYER</div>
+            </div>
+            <div class="cassette-window">
+              <div class="cassette-label azar-label">
+                <div class="cassette-label-title">La Dualidad</div>
+                <div class="cassette-label-info">
+                  <span>Side A</span>
+                  <span>C-90</span>
+                </div>
+              </div>
+              <div class="reels-container">
+                <div class="reel playing">
+                  <div class="reel-center"><div class="reel-hub"></div></div>
+                  <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+                </div>
+                <div class="tape playing"></div>
+                <div class="reel playing">
+                  <div class="reel-center"><div class="reel-hub"></div></div>
+                  <div class="reel-teeth" style="transform: rotate(0deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(45deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(90deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(135deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(180deg) translateY(-24px);"></div>
+                  <div class="reel-teeth" style="transform: rotate(225deg) translateY(-24px);"></div>
+                </div>
+              </div>
+            </div>
+            <div class="controls">
+              <button class="control-btn">⏮️</button>
+              <button class="control-btn play">▶️</button>
+              <button class="control-btn">⏭️</button>
+              <button class="control-btn">🔀</button>
+            </div>
+          </div>
+        </div>
+        <div class="walkman-info">
+          <h2 class="walkman-title azar">AZAR</h2>
+          <p class="walkman-desc">
+            RazAzaR: La Dualidad de Tunova - Versión CAOS<br>
+            Generativo Experimental - Creatividad Sin Límites
+          </p>
+          <div class="collection-stats">
+            <div class="stat">
+              <span class="stat-value" id="azar-tracks">1</span>
+              <span class="stat-label">Tracks</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value" id="azar-likes">0</span>
+              <span class="stat-label">Total Likes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cassettes-grid" id="azar-cassettes"></div>
+    </section>
+
+    <!-- RADIO PIRATA Section -->
+    <section id="radio" class="walkman-section">
+      <div class="radio-pirata-section">
+        <div class="radio-pirata-header">
+          <h2>📻 RADIO PIRATA</h2>
+          <p>
+            Mix automático de todas las canciones del ecosistema TUNOVA<br>
+            + Playlists externas que pasan el TUNOVA FILTRO
+          </p>
+        </div>
+
+        <div class="radio-player">
+          <div class="now-playing">
+            <div class="now-playing-label">🎵 Ahora Sonando</div>
+            <div class="now-playing-title" id="radio-now-playing-title">Radio Pirata - Mix Aleatorio</div>
+            <div class="now-playing-artist" id="radio-now-playing-artist">Ecosistema TUNOVA</div>
+          </div>
+
+          <div class="radio-controls">
+            <button class="radio-btn" onclick="radioPrev()">⏮️</button>
+            <button class="radio-btn play-btn" id="radio-play-btn" onclick="radioTogglePlay()">▶️</button>
+            <button class="radio-btn" onclick="radioNext()">⏭️</button>
+            <button class="radio-btn" onclick="radioShuffle()">🔀</button>
+          </div>
+
+          <div style="text-align: center; margin: 1.5rem 0; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/tunova_walkmans.html" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #39FF14 0%, #2ecc71 100%); color: black; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; box-shadow: 0 0 20px rgba(57, 255, 20, 0.5); transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 30px rgba(57, 255, 20, 0.8)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(57, 255, 20, 0.5)';">
+              🎧 VER WALKMANS RETRO 🎵
+            </a>
+            <a href="/wmp-player.html" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #FF0000 0%, #FF6B00 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 30px rgba(255, 0, 0, 0.8)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 0, 0, 0.5)';">
+              💿 ABRIR REPRODUCTOR WINDOWS MEDIA PLAYER 🎵
+            </a>
+            <p style="margin-top: 0.5rem; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
+              ✨ Con skins nostálgicas de WMP ✨
+            </p>
+          </div>
+
+          <div class="radio-playlist">
+            <h3>🎧 Playlist Actual (15 Tracks)</h3>
+            <div id="radio-playlist-tracks"></div>
+          </div>
+        </div>
+
+        <div class="external-playlists">
+          <h3>🌐 Playlists Externas - TUNOVA FILTRO</h3>
+          <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 2rem;">
+            Playlists curadas que pasan el filtro de calidad TUNOVA
+          </p>
+          <div class="playlist-grid">
+            <div class="playlist-card">
+              <div class="playlist-icon">🎵</div>
+              <div class="playlist-name">Spotify - Web3 Vibes</div>
+              <div class="playlist-desc">Playlist oficial de TUNOVA en Spotify</div>
+              <a href="#" class="playlist-link" target="_blank">🔗 Agregar Link</a>
+            </div>
+            <div class="playlist-card">
+              <div class="playlist-icon">☁️</div>
+              <div class="playlist-name">SoundCloud - Indie Crypto</div>
+              <div class="playlist-desc">Lo mejor del indie crypto en SoundCloud</div>
+              <a href="#" class="playlist-link" target="_blank">🔗 Agregar Link</a>
+            </div>
+            <div class="playlist-card">
+              <div class="playlist-icon">🎧</div>
+              <div class="playlist-name">Audius - Decentralized Hits</div>
+              <div class="playlist-desc">Hits descentralizados en Audius</div>
+              <a href="#" class="playlist-link" target="_blank">🔗 Agregar Link</a>
+            </div>
+            <div class="playlist-card">
+              <div class="playlist-icon">📀</div>
+              <div class="playlist-name">Bandcamp - Underground</div>
+              <div class="playlist-desc">Underground seleccionado de Bandcamp</div>
+              <a href="#" class="playlist-link" target="_blank">🔗 Agregar Link</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Funded Section -->
+    <div class="top-funded">
+      <h2>🏆 Top Tracks - Financiamiento para Videoclips</h2>
+      <div class="top-funded-list" id="top-funded-list"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 TUNOVA.IO - Plataforma Musical Web3 + Radio Pirata 🏴‍☠️ | El éxito de uno es el éxito de todos</p>
+  </footer>
+
+  <script>
+    // Data structure for collections
+    const collections = {
+      vahoman: {
+        name: 'VAH0M4N',
+        tracks: [
+          { id: 'v1', title: 'Rey de los Emprendedores', artist: 'Vah0m4n', duration: '3:45', link: '' }
+        ]
+      },
+      nakamas: {
+        name: 'NAKAMAS CREW',
+        tracks: [
+          { id: 'n1', title: 'NAKAMAS CREW Génesis Vol.1 - Track 1', artist: 'Ecosistema TUNOVA', duration: '3:30', link: '' },
+          { id: 'n2', title: 'NAKAMAS CREW Génesis Vol.1 - Track 2', artist: 'Ecosistema TUNOVA', duration: '3:45', link: '' },
+          { id: 'n3', title: 'NAKAMAS CREW Génesis Vol.1 - Track 3', artist: 'Ecosistema TUNOVA', duration: '4:00', link: '' },
+          { id: 'n4', title: 'NAKAMAS CREW Génesis Vol.1 - Track 4', artist: 'Ecosistema TUNOVA', duration: '3:20', link: '' },
+          { id: 'n5', title: 'NAKAMAS CREW Génesis Vol.1 - Track 5', artist: 'Ecosistema TUNOVA', duration: '3:55', link: '' },
+          { id: 'n6', title: 'NAKAMAS CREW Génesis Vol.1 - Track 6', artist: 'Ecosistema TUNOVA', duration: '4:10', link: '' },
+          { id: 'n7', title: 'NAKAMAS CREW Génesis Vol.1 - Track 7', artist: 'Ecosistema TUNOVA', duration: '3:40', link: '' },
+          { id: 'n8', title: 'NAKAMAS CREW Génesis Vol.1 - Track 8', artist: 'Ecosistema TUNOVA', duration: '3:25', link: '' },
+          { id: 'n9', title: 'NAKAMAS CREW Génesis Vol.1 - Track 9', artist: 'Ecosistema TUNOVA', duration: '4:05', link: '' },
+          { id: 'n10', title: 'NAKAMAS CREW Génesis Vol.1 - Track 10', artist: 'Ecosistema TUNOVA', duration: '3:50', link: '' },
+          { id: 'n11', title: 'NAKAMAS CREW Génesis Vol.1 - Track 11', artist: 'Ecosistema TUNOVA', duration: '3:35', link: '' },
+          { id: 'n12', title: 'NAKAMAS CREW Génesis Vol.1 - Track 12', artist: 'Ecosistema TUNOVA', duration: '4:15', link: '' }
+        ]
+      },
+      raza: {
+        name: 'RAZA',
+        tracks: [
+          { id: 'r1', title: 'La Dualidad de Tunova - ORDEN', artist: 'RazAzaR', duration: '4:30', link: '' }
+        ]
+      },
+      azar: {
+        name: 'AZAR',
+        tracks: [
+          { id: 'a1', title: 'La Dualidad de Tunova - CAOS', artist: 'RazAzaR', duration: '4:30', link: '' }
+        ]
+      }
+    };
+
+    // Radio state
+    let radioPlaying = false;
+    let radioCurrentTrackIndex = 0;
+    let radioPlaylist = [];
+
+    // Load likes from localStorage
+    const loadLikes = () => {
+      const stored = localStorage.getItem('tunova_likes');
+      return stored ? JSON.parse(stored) : {};
+    };
+
+    // Save likes to localStorage
+    const saveLikes = (likes) => {
+      localStorage.setItem('tunova_likes', JSON.stringify(likes));
+    };
+
+    // Initialize likes
+    let likes = loadLikes();
+
+    // Toggle like
+    const toggleLike = (trackId, collectionId) => {
+      if (!likes[trackId]) {
+        likes[trackId] = { count: 0, liked: false, collection: collectionId };
+      }
+      
+      if (likes[trackId].liked) {
+        likes[trackId].count--;
+        likes[trackId].liked = false;
+      } else {
+        likes[trackId].count++;
+        likes[trackId].liked = true;
+      }
+      
+      saveLikes(likes);
+      renderCollection(collectionId);
+      updateStats();
+      updateTopFunded();
+    };
+
+    // Render cassette card
+    const renderCassette = (track, collectionId, index) => {
+      const trackLikes = likes[track.id] || { count: 0, liked: false };
+      const likedClass = trackLikes.liked ? 'liked' : '';
+      const heart = trackLikes.liked ? '❤️' : '🤍';
+      
+      return `
+        <div class="cassette-card">
+          <div class="cassette-header">
+            <span class="cassette-number">Track ${index + 1}</span>
+            <div class="cassette-likes">
+              <button class="like-btn ${likedClass}" onclick="toggleLike('${track.id}', '${collectionId}')">
+                ${heart}
+              </button>
+              <span class="like-count">${trackLikes.count}</span>
+            </div>
+          </div>
+          <h3 class="cassette-title">${track.title}</h3>
+          <p class="cassette-artist">${track.artist}</p>
+          <p class="cassette-duration">⏱️ ${track.duration}</p>
+          ${track.link ? 
+            `<a href="${track.link}" target="_blank" class="cassette-link">🎵 Escuchar Ahora</a>` :
+            `<div class="cassette-link-placeholder">🔗 Link pendiente</div>`
+          }
+        </div>
+      `;
+    };
+
+    // Render collection
+    const renderCollection = (collectionId) => {
+      const collection = collections[collectionId];
+      const container = document.getElementById(`${collectionId}-cassettes`);
+      
+      container.innerHTML = collection.tracks
+        .map((track, index) => renderCassette(track, collectionId, index))
+        .join('');
+    };
+
+    // Update stats
+    const updateStats = () => {
+      Object.keys(collections).forEach(collectionId => {
+        const collection = collections[collectionId];
+        const totalLikes = collection.tracks.reduce((sum, track) => {
+          return sum + (likes[track.id]?.count || 0);
+        }, 0);
+        
+        document.getElementById(`${collectionId}-tracks`).textContent = collection.tracks.length;
+        document.getElementById(`${collectionId}-likes`).textContent = totalLikes;
+      });
+    };
+
+    // Update top funded
+    const updateTopFunded = () => {
+      const allTracks = [];
+      
+      Object.keys(collections).forEach(collectionId => {
+        collections[collectionId].tracks.forEach(track => {
+          allTracks.push({
+            ...track,
+            collection: collections[collectionId].name,
+            collectionId: collectionId,
+            likes: likes[track.id]?.count || 0
+          });
+        });
+      });
+      
+      allTracks.sort((a, b) => b.likes - a.likes);
+      const top10 = allTracks.slice(0, 10);
+      
+      const container = document.getElementById('top-funded-list');
+      container.innerHTML = top10.map((track, index) => {
+        let badgeClass = '';
+        let rankIcon = `#${index + 1}`;
+        
+        if (index === 0) { badgeClass = 'gold'; rankIcon = '🥇'; }
+        else if (index === 1) { badgeClass = 'silver'; rankIcon = '🥈'; }
+        else if (index === 2) { badgeClass = 'bronze'; rankIcon = '🥉'; }
+        
+        return `
+          <div class="top-funded-item">
+            <div class="rank-badge ${badgeClass}">${rankIcon}</div>
+            <div class="rank-info">
+              <div class="rank-title">${track.title}</div>
+              <div class="rank-collection">${track.collection}</div>
+              <div class="rank-likes">❤️ ${track.likes} likes</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    };
+
+    // Show collection
+    const showCollection = (collectionId) => {
+      // Hide all sections
+      document.querySelectorAll('.walkman-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Remove active class from all buttons
+      document.querySelectorAll('.collection-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Show selected section
+      document.getElementById(collectionId).classList.add('active');
+      
+      // Add active class to clicked button
+      if (collectionId === 'radio') {
+        document.querySelector('.collection-btn.radio').classList.add('active');
+      } else {
+        document.querySelector(`.collection-btn.${collectionId}`).classList.add('active');
+      }
+    };
+
+    // Initialize Radio Pirata
+    const initRadio = () => {
+      // Collect all tracks from all collections
+      radioPlaylist = [];
+      Object.keys(collections).forEach(collectionId => {
+        collections[collectionId].tracks.forEach(track => {
+          radioPlaylist.push({
+            ...track,
+            collection: collections[collectionId].name
+          });
+        });
+      });
+      
+      // Shuffle playlist
+      radioPlaylist = radioPlaylist.sort(() => Math.random() - 0.5);
+      
+      // Render playlist
+      renderRadioPlaylist();
+    };
+
+    // Render radio playlist
+    const renderRadioPlaylist = () => {
+      const container = document.getElementById('radio-playlist-tracks');
+      container.innerHTML = radioPlaylist.map((track, index) => {
+        const isPlaying = index === radioCurrentTrackIndex && radioPlaying;
+        return `
+          <div class="radio-track ${isPlaying ? 'playing' : ''}" onclick="radioPlayTrack(${index})">
+            <div class="radio-track-number">${index + 1}</div>
+            <div class="radio-track-info">
+              <div class="radio-track-title">${track.title}</div>
+              <div class="radio-track-artist">${track.artist} - ${track.collection}</div>
+            </div>
+            <div class="radio-track-duration">${track.duration}</div>
+          </div>
+        `;
+      }).join('');
+    };
+
+    // Radio controls
+    const radioTogglePlay = () => {
+      radioPlaying = !radioPlaying;
+      const btn = document.getElementById('radio-play-btn');
+      btn.textContent = radioPlaying ? '⏸️' : '▶️';
+      
+      if (radioPlaying) {
+        radioPlayTrack(radioCurrentTrackIndex);
+      }
+    };
+
+    const radioPlayTrack = (index) => {
+      radioCurrentTrackIndex = index;
+      const track = radioPlaylist[index];
+      
+      document.getElementById('radio-now-playing-title').textContent = track.title;
+      document.getElementById('radio-now-playing-artist').textContent = `${track.artist} - ${track.collection}`;
+      
+      radioPlaying = true;
+      document.getElementById('radio-play-btn').textContent = '⏸️';
+      
+      renderRadioPlaylist();
+    };
+
+    const radioNext = () => {
+      radioCurrentTrackIndex = (radioCurrentTrackIndex + 1) % radioPlaylist.length;
+      radioPlayTrack(radioCurrentTrackIndex);
+    };
+
+    const radioPrev = () => {
+      radioCurrentTrackIndex = (radioCurrentTrackIndex - 1 + radioPlaylist.length) % radioPlaylist.length;
+      radioPlayTrack(radioCurrentTrackIndex);
+    };
+
+    const radioShuffle = () => {
+      radioPlaylist = radioPlaylist.sort(() => Math.random() - 0.5);
+      radioCurrentTrackIndex = 0;
+      renderRadioPlaylist();
+      radioPlayTrack(0);
+    };
+
+    // Initialize
+    Object.keys(collections).forEach(collectionId => {
+      renderCollection(collectionId);
+    });
+    updateStats();
+    updateTopFunded();
+    initRadio();
+  </script>
+</body>
+</html>

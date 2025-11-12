@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📻 Radio Pirata - Windows Media Player Edition</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background: linear-gradient(135deg, #000000 0%, #1A0033 50%, #000000 100%);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(57, 255, 20, 0.2);
+      border: 2px solid #39FF14;
+      color: #39FF14;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .back-button:hover {
+      background: rgba(57, 255, 20, 0.4);
+      transform: translateX(-5px);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      color: #39FF14;
+      text-shadow: 0 0 20px #39FF14;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
+    }
+
+    .skin-selector {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .skin-btn {
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .skin-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(57, 255, 20, 0.3);
+    }
+
+    .skin-btn.active {
+      background: #39FF14;
+      color: black;
+      border-color: #39FF14;
+    }
+
+    .player-container {
+      background: rgba(0, 0, 0, 0.8);
+      border: 3px solid #39FF14;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 0 40px rgba(57, 255, 20, 0.5);
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .skin-display {
+      background: #000;
+      border: 2px solid rgba(57, 255, 20, 0.5);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skin-image {
+      max-width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(57, 255, 20, 0.3));
+    }
+
+    .now-playing {
+      background: rgba(57, 255, 20, 0.1);
+      border: 2px solid rgba(57, 255, 20, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .now-playing-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #39FF14;
+      margin-bottom: 0.5rem;
+    }
+
+    .now-playing-artist {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .control-btn {
+      background: linear-gradient(135deg, #39FF14 0%, #2ecc71 100%);
+      border: none;
+      color: black;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .control-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+    }
+
+    .control-btn.play {
+      width: 60px;
+      height: 60px;
+      font-size: 1.8rem;
+    }
+
+    .progress-container {
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #39FF14 0%, #2ecc71 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .volume-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .volume-label {
+      color: #39FF14;
+      font-weight: bold;
+    }
+
+    .volume-slider {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .volume-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #39FF14 0%, #2ecc71 100%);
+      width: 70%;
+      border-radius: 3px;
+    }
+
+    .playlist {
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(57, 255, 20, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .playlist h3 {
+      color: #39FF14;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .playlist-item {
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .playlist-item:hover {
+      background: rgba(57, 255, 20, 0.2);
+      border-color: #39FF14;
+    }
+
+    .playlist-item.active {
+      background: rgba(57, 255, 20, 0.3);
+      border-color: #39FF14;
+    }
+
+    .playlist-item-title {
+      font-weight: bold;
+      color: white;
+      margin-bottom: 0.25rem;
+    }
+
+    .playlist-item-artist {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .skin-selector {
+        gap: 0.5rem;
+      }
+      
+      .skin-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+      
+      .player-container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="/tunova_con_radio_pirata.html" class="back-button">←</a>
+
+  <div class="header">
+    <h1>📻 RADIO PIRATA</h1>
+    <p>Windows Media Player Edition - Skins Nostálgicas</p>
+  </div>
+
+  <div class="skin-selector">
+    <button class="skin-btn active" onclick="changeSkin('primitive')">Primitive</button>
+    <button class="skin-btn" onclick="changeSkin('mario')">Super Mario Bros</button>
+    <button class="skin-btn" onclick="changeSkin('msn')">MSN</button>
+    <button class="skin-btn" onclick="changeSkin('halflife')">Half-Life 2</button>
+    <button class="skin-btn" onclick="changeSkin('headspace')">Headspace</button>
+    <button class="skin-btn" onclick="changeSkin('kenwood')">Kenwood MPXP</button>
+  </div>
+
+  <div class="player-container">
+    <div class="skin-display" id="skin-display">
+      <img src="/wmp-skins/Primitive/left_hand_.bmp" alt="WMP Skin" class="skin-image" id="skin-image">
+    </div>
+
+    <div class="now-playing">
+      <div class="now-playing-title" id="track-title">Rey de los Emprendedores</div>
+      <div class="now-playing-artist" id="track-artist">Vah0m4n</div>
+    </div>
+
+    <div class="controls">
+      <button class="control-btn" onclick="prevTrack()">⏮️</button>
+      <button class="control-btn play" id="play-btn" onclick="togglePlay()">▶️</button>
+      <button class="control-btn" onclick="nextTrack()">⏭️</button>
+      <button class="control-btn" onclick="shuffle()">🔀</button>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-bar" onclick="seek(event)">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="time-display">
+        <span id="current-time">0:00</span>
+        <span id="total-time">3:45</span>
+      </div>
+    </div>
+
+    <div class="volume-container">
+      <span class="volume-label">🔊</span>
+      <div class="volume-slider" onclick="changeVolume(event)">
+        <div class="volume-fill" id="volume-fill"></div>
+      </div>
+    </div>
+
+    <div class="playlist">
+      <h3>🎧 Playlist - Ecosistema TUNOVA</h3>
+      <div id="playlist-container"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    🏴‍☠️ Radio Pirata | Mugiwaras Web3 🎹
+  </div>
+
+  <script>
+    // Playlist de tracks
+    const playlist = [
+      { title: 'Rey de los Emprendedores', artist: 'Vah0m4n', duration: '3:45' },
+      { title: 'NAKAMAS CREW Génesis Vol.1 - Track 1', artist: 'NAKAMAS CREW', duration: '4:12' },
+      { title: 'NAKAMAS CREW Génesis Vol.1 - Track 2', artist: 'NAKAMAS CREW', duration: '3:58' },
+      { title: 'NAKAMAS CREW Génesis Vol.1 - Track 3', artist: 'NAKAMAS CREW', duration: '4:30' },
+      { title: 'RAZA - Brutalismo Elegante', artist: 'RazAzaR', duration: '3:22' },
+      { title: 'AZAR - Track 1', artist: 'AZAR', duration: '4:05' },
+      { title: 'AZAR - Track 2', artist: 'AZAR', duration: '3:48' },
+      { title: 'Pirate Radio Mix', artist: 'DJ TUNOVA', duration: '5:00' }
+    ];
+
+    // Configuración de skins
+    const skins = {
+      primitive: '/wmp-skins/Primitive/left_hand_.bmp',
+      mario: '/wmp-skins/NewSuperMarioBros/bg_mario.gif',
+      msn: '/wmp-skins/MSN/base.gif',
+      halflife: '/wmp-skins/Half-Life_2/c_back.jpg',
+      headspace: '/wmp-skins/Headspace/EQ_01_DF.bmp',
+      kenwood: '/wmp-skins/Kenwood_MPXP/c_back.jpg'
+    };
+
+    let currentTrack = 0;
+    let isPlaying = false;
+    let currentTime = 0;
+    let duration = 225; // 3:45 en segundos
+
+    // Inicializar playlist
+    function initPlaylist() {
+      const container = document.getElementById('playlist-container');
+      playlist.forEach((track, index) => {
+        const item = document.createElement('div');
+        item.className = `playlist-item ${index === 0 ? 'active' : ''}`;
+        item.onclick = () => selectTrack(index);
+        item.innerHTML = `
+          <div class="playlist-item-title">${track.title}</div>
+          <div class="playlist-item-artist">${track.artist} - ${track.duration}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // Cambiar skin
+    function changeSkin(skinName) {
+      const skinImage = document.getElementById('skin-image');
+      skinImage.src = skins[skinName];
+      
+      // Actualizar botones activos
+      document.querySelectorAll('.skin-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // Seleccionar track
+    function selectTrack(index) {
+      currentTrack = index;
+      const track = playlist[index];
+      document.getElementById('track-title').textContent = track.title;
+      document.getElementById('track-artist').textContent = track.artist;
+      document.getElementById('total-time').textContent = track.duration;
+      
+      // Actualizar playlist visual
+      document.querySelectorAll('.playlist-item').forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+      });
+      
+      if (isPlaying) {
+        currentTime = 0;
+        updateProgress();
+      }
+    }
+
+    // Toggle play/pause
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      const playBtn = document.getElementById('play-btn');
+      playBtn.textContent = isPlaying ? '⏸️' : '▶️';
+      
+      if (isPlaying) {
+        startProgress();
+      }
+    }
+
+    // Simular progreso
+    function startProgress() {
+      if (!isPlaying) return;
+      
+      const interval = setInterval(() => {
+        if (!isPlaying) {
+          clearInterval(interval);
+          return;
+        }
+        
+        currentTime += 1;
+        if (currentTime >= duration) {
+          nextTrack();
+          clearInterval(interval);
+          return;
+        }
+        
+        updateProgress();
+      }, 1000);
+    }
+
+    // Actualizar barra de progreso
+    function updateProgress() {
+      const progress = (currentTime / duration) * 100;
+      document.getElementById('progress-fill').style.width = progress + '%';
+      
+      const minutes = Math.floor(currentTime / 60);
+      const seconds = currentTime % 60;
+      document.getElementById('current-time').textContent = 
+        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // Navegar tracks
+    function prevTrack() {
+      currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+      selectTrack(currentTrack);
+    }
+
+    function nextTrack() {
+      currentTrack = (currentTrack + 1) % playlist.length;
+      selectTrack(currentTrack);
+    }
+
+    // Shuffle
+    function shuffle() {
+      const randomIndex = Math.floor(Math.random() * playlist.length);
+      selectTrack(randomIndex);
+    }
+
+    // Seek
+    function seek(event) {
+      const bar = event.currentTarget;
+      const clickX = event.clientX - bar.getBoundingClientRect().left;
+      const percentage = clickX / bar.offsetWidth;
+      currentTime = Math.floor(duration * percentage);
+      updateProgress();
+    }
+
+    // Cambiar volumen
+    function changeVolume(event) {
+      const slider = event.currentTarget;
+      const clickX = event.clientX - slider.getBoundingClientRect().left;
+      const percentage = (clickX / slider.offsetWidth) * 100;
+      document.getElementById('volume-fill').style.width = percentage + '%';
+    }
+
+    // Inicializar
+    initPlaylist();
+  </script>
+</body>
+</html>

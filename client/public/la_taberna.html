@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Taberna - Centro Colaborativo TIDE OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: linear-gradient(135deg, #1a0033 0%, #0d001a 100%);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .taberna-container {
+            display: flex;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a0033 0%, #0d001a 100%);
+        }
+
+        /* Header */
+        .taberna-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(90deg, #2d0052 0%, #1a0033 100%);
+            border-bottom: 3px solid #39FF14;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+        }
+
+        .taberna-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #39FF14;
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .taberna-title::before {
+            content: "🍺";
+            font-size: 2rem;
+        }
+
+        .header-status {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid #39FF14;
+            border-radius: 5px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #39FF14;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 15px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 100%);
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.8);
+        }
+
+        /* Main Content */
+        .taberna-main {
+            display: flex;
+            margin-top: 60px;
+            height: calc(100vh - 60px);
+        }
+
+        /* Sidebar - Lista de Contactos */
+        .contacts-panel {
+            width: 280px;
+            background: linear-gradient(180deg, #2d0052 0%, #1a0033 100%);
+            border-right: 2px solid #39FF14;
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+
+        .contacts-header {
+            padding: 1rem;
+            border-bottom: 2px solid rgba(57, 255, 20, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .contacts-search {
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid #39FF14;
+            color: #fff;
+            border-radius: 3px;
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .contacts-search::placeholder {
+            color: rgba(57, 255, 20, 0.5);
+        }
+
+        .contact-group {
+            padding: 0.5rem 0;
+        }
+
+        .contact-group-title {
+            padding: 0.5rem 1rem;
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .contact-item:hover {
+            background: rgba(57, 255, 20, 0.15);
+            border-left-color: #39FF14;
+        }
+
+        .contact-item.active {
+            background: rgba(57, 255, 20, 0.25);
+            border-left-color: #39FF14;
+        }
+
+        .contact-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9D00FF 0%, #FF00FF 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contact-name {
+            font-size: 0.95rem;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contact-status {
+            font-size: 0.75rem;
+            color: #39FF14;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-badge {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-badge.online {
+            background: #39FF14;
+        }
+
+        .status-badge.away {
+            background: #FFD700;
+        }
+
+        .status-badge.offline {
+            background: #666;
+        }
+
+        /* Chat Area */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #1a0033 0%, #0d001a 100%);
+        }
+
+        .chat-header {
+            padding: 1rem;
+            border-bottom: 2px solid #39FF14;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #39FF14;
+        }
+
+        .chat-tools {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-tool-btn {
+            width: 35px;
+            height: 35px;
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid #39FF14;
+            border-radius: 3px;
+            color: #39FF14;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .chat-tool-btn:hover {
+            background: rgba(57, 255, 20, 0.25);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.own {
+            justify-content: flex-end;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9D00FF 0%, #FF00FF 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 60%;
+        }
+
+        .message.own .message-content {
+            max-width: 60%;
+        }
+
+        .message-bubble {
+            background: rgba(57, 255, 20, 0.15);
+            border: 1px solid #39FF14;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            word-wrap: break-word;
+        }
+
+        .message.own .message-bubble {
+            background: rgba(157, 0, 255, 0.2);
+            border-color: #9D00FF;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: rgba(57, 255, 20, 0.6);
+            margin-top: 0.25rem;
+        }
+
+        .message.own .message-time {
+            text-align: right;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 1rem;
+            border-top: 2px solid #39FF14;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 0.75rem;
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid #39FF14;
+            color: #fff;
+            border-radius: 3px;
+            font-family: 'Courier Prime', monospace;
+            resize: none;
+            max-height: 100px;
+        }
+
+        .message-input::placeholder {
+            color: rgba(57, 255, 20, 0.5);
+        }
+
+        .message-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #39FF14 0%, #2ecc71 100%);
+            border: 2px solid #39FF14;
+            border-radius: 3px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.8);
+        }
+
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            border-bottom: 2px solid #39FF14;
+            background: rgba(57, 255, 20, 0.05);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            color: rgba(57, 255, 20, 0.6);
+            font-weight: bold;
+        }
+
+        .tab:hover {
+            color: #39FF14;
+        }
+
+        .tab.active {
+            color: #39FF14;
+            border-bottom-color: #39FF14;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(57, 255, 20, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #39FF14;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2ecc71;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .taberna-main {
+                flex-direction: column;
+            }
+
+            .contacts-panel {
+                width: 100%;
+                height: 200px;
+                border-right: none;
+                border-bottom: 2px solid #39FF14;
+            }
+
+            .chat-panel {
+                flex: 1;
+            }
+
+            .message-content {
+                max-width: 100%;
+            }
+
+            .message.own .message-content {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="taberna-container">
+        <a href="nakama-os.html" class="back-btn">←</a>
+
+        <div class="taberna-header">
+            <div class="taberna-title">La Taberna - Centro Colaborativo</div>
+            <div class="header-status">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>12 Nakamas Online</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="taberna-main">
+            <!-- Sidebar de Contactos -->
+            <div class="contacts-panel">
+                <div class="contacts-header">
+                    <input type="text" class="contacts-search" placeholder="Buscar Nakama...">
+                </div>
+
+                <div class="contact-group">
+                    <div class="contact-group-title">📡 Canales</div>
+                    <div class="contact-item active">
+                        <div class="status-badge online"></div>
+                        <div class="contact-info">
+                            <div class="contact-name">#general</div>
+                            <div class="contact-status">12 miembros</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="status-badge online"></div>
+                        <div class="contact-info">
+                            <div class="contact-name">#producciones</div>
+                            <div class="contact-status">8 miembros</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="status-badge online"></div>
+                        <div class="contact-info">
+                            <div class="contact-name">#trading</div>
+                            <div class="contact-status">5 miembros</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="status-badge away"></div>
+                        <div class="contact-info">
+                            <div class="contact-name">#desarrollo</div>
+                            <div class="contact-status">3 miembros</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-group">
+                    <div class="contact-group-title">👥 Nakamas Online</div>
+                    <div class="contact-item">
+                        <div class="status-badge online"></div>
+                        <div class="contact-avatar">V</div>
+                        <div class="contact-info">
+                            <div class="contact-name">Vah0m4n</div>
+                            <div class="contact-status">Disponible</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="status-badge online"></div>
+                        <div class="contact-avatar">L</div>
+                        <div class="contact-info">
+                            <div class="contact-name">Luffy</div>
+                            <div class="contact-status">Disponible</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="status-badge online"></div>
+                        <div class="contact-avatar">N</div>
+                        <div class="contact-info">
+                            <div class="contact-name">Nami</div>
+                            <div class="contact-status">Ocupado</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="status-badge away"></div>
+                        <div class="contact-avatar">Z</div>
+                        <div class="contact-info">
+                            <div class="contact-name">Zoro</div>
+                            <div class="contact-status">Ausente</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-group">
+                    <div class="contact-group-title">🔗 Offline</div>
+                    <div class="contact-item">
+                        <div class="status-badge offline"></div>
+                        <div class="contact-avatar">S</div>
+                        <div class="contact-info">
+                            <div class="contact-name">Sanji</div>
+                            <div class="contact-status">Offline</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Chat -->
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-title">#general - Anuncios y Noticias</div>
+                    <div class="chat-tools">
+                        <button class="chat-tool-btn" title="Llamada">📞</button>
+                        <button class="chat-tool-btn" title="Video">📹</button>
+                        <button class="chat-tool-btn" title="Compartir">📎</button>
+                        <button class="chat-tool-btn" title="Opciones">⚙️</button>
+                    </div>
+                </div>
+
+                <div class="messages-area">
+                    <div class="message">
+                        <div class="message-avatar">V</div>
+                        <div class="message-content">
+                            <div class="message-bubble">¡Bienvenidos a La Taberna! 🍺 Este es el corazón del ecosistema TIDElabs</div>
+                            <div class="message-time">14:32</div>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="message-avatar">L</div>
+                        <div class="message-content">
+                            <div class="message-bubble">¿Alguien quiere colaborar en una producción? Tengo una idea increíble</div>
+                            <div class="message-time">14:35</div>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="message-avatar">N</div>
+                        <div class="message-content">
+                            <div class="message-bubble">¡Yo me anoto! Cuéntame más detalles</div>
+                            <div class="message-time">14:36</div>
+                        </div>
+                    </div>
+
+                    <div class="message own">
+                        <div class="message-content">
+                            <div class="message-bubble">Hola Nakamas! ¿Cómo están? 🎉</div>
+                            <div class="message-time">14:40</div>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="message-avatar">V</div>
+                        <div class="message-content">
+                            <div class="message-bubble">¡Perfecto! Aquí podemos hacer tratos colaborativos seguros con contratos inteligentes</div>
+                            <div class="message-time">14:41</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <textarea class="message-input" placeholder="Escribe tu mensaje aquí..." rows="1"></textarea>
+                    <button class="send-btn">➤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-resize textarea
+        const textarea = document.querySelector('.message-input');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+
+        // Send message
+        document.querySelector('.send-btn').addEventListener('click', function() {
+            const message = textarea.value.trim();
+            if (message) {
+                const messagesArea = document.querySelector('.messages-area');
+                const newMessage = document.createElement('div');
+                newMessage.className = 'message own';
+                newMessage.innerHTML = `
+                    <div class="message-content">
+                        <div class="message-bubble">${message}</div>
+                        <div class="message-time">${new Date().toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}</div>
+                    </div>
+                `;
+                messagesArea.appendChild(newMessage);
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+                textarea.value = '';
+                textarea.style.height = 'auto';
+            }
+        });
+
+        // Enter to send
+        textarea.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.querySelector('.send-btn').click();
+            }
+        });
+
+        // Contact click
+        document.querySelectorAll('.contact-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.contact-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                const name = this.querySelector('.contact-name').textContent;
+                document.querySelector('.chat-title').textContent = name;
+            });
+        });
+    </script>
+</body>
+</html>
