@@ -650,9 +650,6 @@
     <!-- Puerto (Dock) -->
     <footer class="puerto fixed bottom-0 left-0 right-0 z-40 flex justify-center items-center space-x-4 p-3 h-28">
         <!-- Dock Icons for New Apps (React) -->
-        <div id="dock-waitlist" class="dock-icon rounded-lg" title="Waitlist MS-DOS (Reclutamiento)">
-            <img src="/icons/nakama/app/1.png" alt="Waitlist" class="w-full h-full object-contain">
-        </div>
         <div id="dock-tunova" class="dock-icon rounded-lg" title="TUNOVA.IO (Walkman)">
             <img src="/icons/nakama/app/2.png" alt="TUNOVA.IO" class="w-full h-full object-contain">
         </div>
@@ -1008,7 +1005,6 @@
 
         function init() {
             // Dock Icons for New Apps (React)
-            document.getElementById('dock-waitlist').onclick = () => openExternalWindow('waitlist.html', 'Waitlist MS-DOS', 800, 600);
             document.getElementById('dock-tunova').onclick = () => openExternalWindow('tunova_con_radio_pirata.html', 'TUNOVA.IO', 900, 600);
             document.getElementById('dock-mint').onclick = () => openExternalWindow('mint.html', 'GENESIS MINT', 1000, 800);
             document.getElementById('dock-taberna').onclick = () => openExternalWindow('taberna.html', 'LA TABERNA', 900, 700);
