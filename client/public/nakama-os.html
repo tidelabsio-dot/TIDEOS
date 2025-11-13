@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAKAMA Os - Edición Rey de los Piratas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/panzoom@9.4.3/dist/panzoom.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            font-family: 'M PLUS+Rounded+1c', sans-serif;
+            --color-parchment: #fdf2e3; /* beige-50 */
+            --color-wood: #581c0d; /* amber-950 */
+            --color-wood-light: #7c2d12; /* amber-900 */
+            --color-ink: #000000;
+            --color-gold: #facc15; /* yellow-400 */
+            --color-red: #e11d48; /* rose-600 */
+            --color-haki: #6d28d9; /* violet-700 */
+        }
+        
+        body {
+            overflow: hidden;
+            user-select: none;
+            height: 100vh;
+            width: 100vw;
+            transition: background 0.5s ease;
+        }
+
+        /* Cursores personalizados de One Piece */
+        body.cursor-luffy-flag,
+        body.cursor-luffy-flag * {
+            cursor: url('/assets/cursors/luffy-flag-32.png') 16 16, auto !important;
+        }
+        
+        body.cursor-luffy-hat,
+        body.cursor-luffy-hat * {
+            cursor: url('/assets/cursors/luffy-hat-32.png') 16 16, auto !important;
+        }
+        
+        body.cursor-law-sword,
+        body.cursor-law-sword * {
+            cursor: url('/assets/cursors/law-sword-32.png') 16 16, auto !important;
+        }
+        
+        body.cursor-luffy-gear2,
+        body.cursor-luffy-gear2 * {
+            cursor: url('/assets/cursors/luffy-gear2-32.png') 16 16, auto !important;
+        }
+
+        @keyframes marAbierto {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body.bg-mar-abierto {
+            background: linear-gradient(-45deg, #a5f3fc, #67e8f9, #0ea5e9, #a5f3fc);
+            background-size: 400% 400%;
+            animation: marAbierto 30s ease infinite;
+        }
+        body.bg-atardecer {
+            background: linear-gradient(-45deg, #f97316, #fde047, #ef4444, #f97316);
+            background-size: 400% 400%;
+            animation: marAbierto 40s ease infinite;
+        }
+        body.bg-noche-tranquila {
+            background: linear-gradient(-45deg, #1e1b4b, #312e81, #0c0a09, #1e1b4b);
+            background-size: 400% 400%;
+            animation: marAbierto 60s ease infinite;
+        }
+        body.bg-crew-1 {
+            background: url('/wallpapers/crew_1.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        body.bg-crew-2 {
+            background: url('/wallpapers/crew_2.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        body.bg-luffy-epic {
+            background: url('/wallpapers/luffy_epic.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        
+        #world-map-img {
+            cursor: grab;
+        }
+        #world-map-img:active {
+            cursor: grabbing;
+        }
+
+        .puente-de-mando {
+            background-color: var(--color-wood);
+            border-bottom: 6px solid var(--color-ink);
+        }
+        
+        .puerto {
+            background-color: var(--color-wood-light);
+            border-top: 6px solid var(--color-ink);
+        }
+        
+        .dock-icon {
+            border: 4px solid var(--color-ink);
+            background-color: var(--color-parchment);
+            transition: all 0.2s ease-out;
+            cursor: pointer;
+            width: 80px;
+            height: 80px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        .dock-icon:hover {
+            transform: translateY(-10px) scale(1.1);
+            background-color: #fef9c3; /* yellow-100 */
+            box-shadow: 0 0 20px #fef9c3;
+        }
+        
+        .den-den-mushi {
+            font-size: 2.5rem;
+            animation: denDenIdle 5s infinite ease-in-out;
+        }
+        @keyframes denDenIdle {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+        .den-den-mushi.ring {
+            animation: denDenRing 0.5s infinite;
+        }
+        @keyframes denDenRing {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+          .window {
+            border: 8px solid var(--color-ink);
+            border-radius: 0.5rem;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.5), 0 0 30px rgba(250, 204, 21, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            position: absolute;
+            z-index: 10;
+            background-color: var(--color-wood-light);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .window:hover {
+            box-shadow: 12px 12px 0px rgba(0,0,0,0.6), 0 0 40px rgba(250, 204, 21, 0.5), inset 0 0 25px rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }    background-image: url('https://r2.flowith.net/files/png/6L5TQ-dark_wood_texture_index_11@1024x1024.png');
+            background-repeat: repeat;
+            background-color: var(--color-wood-light);
+        }
+        .window-titlebar {
+            background-color: var(--color-ink);
+            color: var(--color-parchment);
+            cursor: move;
+            padding: 0.5rem 1rem;
+            font-weight: 700;
+        }
+        .window-close {
+            background-color: var(--color-red);
+            border: 3px solid var(--color-ink);
+            color: white;
+            font-weight: 900;
+            width: 30px;
+            height: 30px;
+            border-radius: 99px;
+            font-size: 1rem;
+        }
+        .window-close:hover { background-color: #be123c; }
+
+        #window-pet > .p-4, #window-den-den > .p-4, #window-missions > .p-4, #window-retro > .p-4, #window-kairoseki > .p-4, #window-dao > .p-4, #window-flota > .p-4, #window-taberna > .p-4, #window-personalizar > .p-4, .cofre-content {
+            background-image: url('https://r2.flowith.net/files/png/WUH3R-parchment_texture_seamless_index_12@1024x1024.png');
+            background-color: var(--color-parchment);
+            background-repeat: repeat;
+        }
+        
+        #don-overlay {
+            opacity: 0;
+            transform: scale(3);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-shadow: 6px 6px 0px var(--color-ink);
+            -webkit-text-stroke: 4px var(--color-ink);
+            pointer-events: none;
+        }
+        #don-overlay.don-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #haki-overlay {
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px) brightness(0.7);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        body.haki-on .window:not(.window-active) {
+            filter: blur(3px) grayscale(0.8);
+        }
+        body.haki-on .window.window-active {
+            box-shadow: 0 0 40px 15px var(--color-haki), 0 0 10px 5px white, 10px 10px 0px rgba(0,0,0,0.5);
+            border-color: var(--color-haki);
+        }
+        
+        .kintsugi-overlay {
+            pointer-events: none;
+        }
+        .crack {
+            position: absolute;
+            background: var(--color-gold);
+            box-shadow: 0 0 10px 2px var(--color-gold);
+        }
+        .crack-1 { width: 5px; height: 100%; top: 0; left: 40%; transform: rotate(15deg); }
+        .crack-2 { width: 3px; height: 40%; top: 30%; left: 42%; transform: rotate(80deg); }
+        .crack-3 { width: 4px; height: 60%; top: 50%; left: 38%; transform: rotate(-30deg); }
+        
+        .cartel-se-busca {
+            background-image: url('https://r2.flowith.net/files/png/WUH3R-parchment_texture_seamless_index_12@1024x1024.png');
+            background-color: #f7e9d4;
+            border: 4px solid #7c2d12;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .cartel-header {
+            font-family: var(--font-main);
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            border-bottom: 6px double var(--color-ink);
+            color: var(--color-ink);
+        }
+        .boton-capturado {
+            background-color: var(--color-red);
+            color: white;
+            font-weight: 900;
+            border: 4px solid var(--color-ink);
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+            transition: all 0.1s ease;
+        }
+        .boton-capturado:hover {
+            background-color: #be123c;
+            transform: scale(1.05);
+        }
+        
+        .bitacora-textarea {
+            border: 4px solid var(--color-wood-light);
+            background-image: url('https://r2.flowith.net/files/png/WUH3R-parchment_texture_seamless_index_12@1024x1024.png');
+            background-color: var(--color-parchment);
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .boton-archivar {
+            background-color: #16a34a; /* green-600 */
+            color: white;
+            font-weight: 900;
+            border: 4px solid var(--color-ink);
+            border-radius: 0.25rem;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+            transition: all 0.1s ease;
+        }
+        .boton-archivar:hover {
+            background-color: #15803d;
+            transform: scale(1.05);
+        }
+
+        .pet-avatar {
+            font-size: 5rem;
+            animation: petBreathe 4s infinite ease-in-out;
+        }
+        @keyframes petBreathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .pet-avatar[data-bond-level="50"] { 
+            filter: drop-shadow(0 0 10px var(--color-gold));
+            animation: petBreathe 2s infinite ease-in-out;
+        }
+        
+        .cofre-sidebar {
+            background: var(--color-wood-light);
+            padding: 0.5rem;
+            border-right: 6px solid var(--color-ink);
+            overflow-y: auto;
+        }
+        .folder-item {
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 0.75rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            color: var(--color-parchment);
+            border: 2px solid transparent;
+        }
+        .folder-item.active, .folder-item:hover {
+            background-color: var(--color-wood);
+            border-color: var(--color-gold);
+        }
+        .cofre-content {
+            padding: 1rem;
+            overflow-y: auto;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 0.25rem;
+            font-weight: 700;
+            border: 2px solid transparent;
+        }
+        .file-item:hover {
+            background-color: #fef9c3; /* yellow-100 */
+            border-color: var(--color-wood-light);
+        }
+        .file-icon {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+        }
+        .window-visor {
+            background-image: url('https://r2.flowith.net/files/png/WUH3R-parchment_texture_seamless_index_12@1024x1024.png');
+            background-color: var(--color-parchment);
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            border-top: 4px solid var(--color-wood-light);
+        }
+
+        .nakama-list {
+            background-image: url('https://r2.flowith.net/files/png/WUH3R-parchment_texture_seamless_index_12@1024x1024.png');
+            background-color: var(--color-parchment);
+            border: 4px solid var(--color-wood-light);
+            border-radius: 0.25rem;
+            height: 300px;
+            overflow-y: auto;
+        }
+        .nakama-category {
+            font-weight: 900;
+            font-size: 1.1rem;
+            padding: 0.5rem;
+            background: var(--color-wood-light);
+            color: var(--color-parchment);
+            border-bottom: 4px solid var(--color-ink);
+        }
+        .nakama-item {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 2px dashed var(--color-wood-light);
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .nakama-item:hover {
+            background: #fef9c3; /* yellow-100 */
+        }
+        .nakama-status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 99px;
+            border: 2px solid var(--color-ink);
+            margin-right: 8px;
+        }
+        .status-online { background-color: #22c55e; } /* green-500 */
+        .status-away { background-color: #f59e0b; } /* amber-500 */
+        .status-offline { background-color: #6b7280; } /* gray-500 */
+
+        .chat-main-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            width: 70%;
+        }
+        .chat-sidebar {
+            width: 30%;
+            min-width: 120px;
+            border-left: 6px solid var(--color-ink);
+            background: #fef9c3; /* yellow-100 */
+            padding: 0.5rem;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .participant-list h4 {
+            font-weight: 900;
+            font-size: 1.1rem;
+            border-bottom: 3px solid var(--color-ink);
+            margin-bottom: 0.5rem;
+        }
+        .participant-item {
+            font-weight: 700;
+        }
+        .owner-badge {
+            color: var(--color-gold);
+            text-shadow: 1px 1px var(--color-ink);
+        }
+        .msg-system {
+            text-align: center;
+            font-weight: 900;
+            color: #059669; /* emerald-600 */
+            background: #d1fae5; /* emerald-100 */
+            border: 2px dashed #059669;
+            padding: 0.25rem;
+            margin: 0.5rem 0;
+            border-radius: 0.25rem;
+        }
+        .msg-topic {
+             text-align: center;
+            font-weight: 900;
+            color: #0284c7; /* sky-600 */
+            background: #e0f2fe; /* sky-100 */
+            border: 2px solid #0284c7;
+            padding: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-window .window-titlebar {
+            background-color: #1d4ed8; /* blue-700 */
+        }
+        
+        .chat-messages {
+            height: 250px;
+            overflow-y: auto;
+            background-image: url('https://r2.flowith.net/files/png/WUH3R-parchment_texture_seamless_index_12@1024x1024.png');
+            background-color: var(--color-parchment);
+            border: 4px solid var(--color-wood-light);
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+            transition: background-color 0.5s ease;
+        }
+        .msg-tu {
+            text-align: right;
+            font-weight: 700;
+            color: #1d4ed8; /* blue-700 */
+        }
+        .msg-nakama {
+            text-align: left;
+            font-weight: 700;
+            color: #be123c; /* rose-700 */
+        }
+        .msg-ataque {
+            text-align: right;
+            font-weight: 900;
+            color: #6d28d9; /* violet-700 */
+            text-transform: uppercase;
+        }
+        .msg-don {
+            text-align: center;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--color-ink);
+        }
+        
+        .chat-input-area {
+            display: flex;
+            margin-top: 0.5rem;
+        }
+        .chat-input {
+            flex-grow: 1;
+            border: 4px solid var(--color-ink);
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+        }
+        .chat-input:disabled {
+            background: #ef4444; /* red-500 */
+            color: white;
+            cursor: not-allowed;
+        }
+        .boton-enviar {
+            background-color: #16a34a; /* green-600 */
+            color: white;
+            font-weight: 900;
+            border: 4px solid var(--color-ink);
+            margin-left: 0.5rem;
+            padding: 0 1rem;
+        }
+        .boton-zumbido {
+            background-color: #f59e0b; /* amber-500 */
+            color: var(--color-ink);
+            font-weight: 900;
+            border: 4px solid var(--color-ink);
+            margin-left: 0.5rem;
+            padding: 0 1rem;
+            font-size: 1.5rem;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0) rotate(-1deg); }
+            20%, 80% { transform: translate3d(2px, 0, 0) rotate(2deg); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0) rotate(-4deg); }
+            40%, 60% { transform: translate3d(4px, 0, 0) rotate(4deg); }
+        }
+        .shake-zumbido {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        .chat-fire-effect {
+            border-color: #f97316; /* orange-500 */
+            box-shadow: 0 0 40px 20px #f97316, 10px 10px 0px rgba(0,0,0,0.5);
+        }
+
+        @keyframes geppoJump {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(10px, -20px); }
+            40% { transform: translate(-15px, -10px); }
+            60% { transform: translate(5px, -30px); }
+            80% { transform: translate(10px, -5px); }
+        }
+        .geppo-jump {
+            animation: geppoJump 1s ease;
+        }
+
+        .boton-personalizar {
+            font-weight: 900;
+            border: 4px solid var(--color-ink);
+            border-radius: 0.25rem;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+            transition: all 0.1s ease;
+        }
+        .boton-personalizar:hover {
+            transform: scale(1.05);
+        }
+        
+        .desktop-buddy {
+            position: absolute; 
+            z-index: 45;
+            will-change: transform, background-position;
+            width: 50px; 
+            height: 50px;
+            background-repeat: no-repeat;
+            image-rendering: pixelated;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+        
+        #luffy-buddy { 
+            background-image: url('/sprites/luffy_spritesheet.png');
+            background-size: 300px 50px; /* 6 frames x 1 row, scaled down */
+        }
+
+        #nami-buddy {
+            background-image: url('/sprites/nami_spritesheet.png');
+            background-size: 300px 50px; /* 6 frames x 1 row, scaled down */
+        }
+
+    </style>
+</head>
+<body class="">
+    
+    <div id="map-bg-container" class="fixed inset-0 w-full h-full -z-10 hidden">
+        <img id="world-map-img" src="https://r2.flowith.net/files/png/3U52Z-one_piece_world_map_index_13@1024x1024.png" class="w-full h-full object-cover" alt="Interactive World Map"/>
+    </div>
+
+    <div id="luffy-buddy" class="desktop-buddy" title="Luffy"></div>
+    <div id="nami-buddy" class="desktop-buddy" title="Nami"></div>
+
+    <div id="don-overlay" class="fixed inset-0 z-[100] flex items-center justify-center text-9xl font-black text-white">
+        ドン!
+    </div>
+    <div id="haki-overlay" class="fixed inset-0 z-10 opacity-0 hidden"></div>
+
+    <header class="puente-de-mando fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-2 text-amber-50 h-16">
+        <div class="flex items-center space-x-4">
+            <a href="/" class="text-3xl hover:scale-110 transition-transform" title="Volver al inicio">←</a>
+            <div class="text-2xl font-black">NAKAMA Os</div>
+        </div>
+        <div class="flex items-center space-x-6">
+            <div id="berries-display" class="text-xl font-bold bg-amber-700 px-4 py-1 rounded-full border-2 border-amber-300 shadow-inner">
+                0 $Berries
+            </div>
+            <div id="pet-button" class="cursor-pointer" title="Abrir Panel del Compañero">
+                <div id="pet-avatar-header" class="text-4xl">👊</div>
+            </div>
+            <div id="den-den-button" class="den-den-mushi cursor-pointer" title="Notificaciones">
+                🐌
+            </div>
+        </div>
+    </header>
+
+    <main id="desktop" class="w-full h-full pt-16 pb-24 relative"> 
+    
+        <div id="window-pet" class="window fixed top-20 right-5 w-[350px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>Tu Primer Nakama</span>
+                <button class="window-close">X</button>
+            </div>
+            <div class="p-4 flex flex-col items-center">
+                <div id="pet-avatar-main" class="pet-avatar" data-bond-level="1">👊</div>
+                <div class="text-center mt-2">
+                    <span id="pet-mode" class="font-bold text-lg">Modo: Aventurero</span>
+                    <p id="pet-quote" class="text-sm italic text-gray-700 h-10">"¡¡CARNE!! ¡A por la misión!"</p>
+                </div>
+                <div class="w-full mt-4">
+                    <label class="font-bold">Vínculo: <span id="bond-level-label">1</span></label>
+                    <div class="w-full bg-gray-300 rounded-full h-4 border-2 border-black">
+                        <div id="bond-progress" class="bg-blue-500 h-full rounded-full" style="width: 1%;"></div>
+                    </div>
+                </div>
+                <button id="pet-interact" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded font-bold border-2 border-black hover:bg-blue-600">
+                    ¡Charlar!
+                </button>
+            </div>
+        </div>
+        
+        <div id="window-den-den" class="window fixed top-32 right-1/4 w-[400px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>DEN-DEN MUSHI (Mensajes)</span>
+                <button class="window-close">X</button>
+            </div>
+            <div id="den-den-content" class="p-4 space-y-2">
+                <p class="text-center text-gray-500">...Zzz... Zzz... (No hay mensajes)</p>
+            </div>
+        </div>
+
+        <div id="window-missions" class="window fixed top-20 left-10 w-[450px] h-[550px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>Tablón de Recompensas</span>
+                <button class="window-close">X</button>
+            </div>
+            <div class="p-4">
+                <div class="flex mb-4">
+                    <input id="mission-input" type="text" class="flex-grow p-2 border-4 border-black rounded" placeholder="Nueva Recompensa...">
+                    <button id="mission-add" class="ml-2 px-4 bg-green-500 text-white font-black text-lg border-4 border-black rounded">+</button>
+                </div>
+                <div id="mission-list" class="space-y-4 h-[400px] overflow-y-auto p-2 bg-amber-100 border-4 border-black rounded">
+                </div>
+            </div>
+        </div>
+        
+        <div id="window-retro" class="window fixed top-1/4 left-1/3 w-[550px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>Bitácora de Capitán (Retrospectiva)</span>
+                <button class="window-close">X</button>
+            </div>
+            <div class="p-4 space-y-4">
+                <p class="font-bold">¡Capitán! Reflexiona sobre tu último viaje para ganar un tesoro.</p>
+                <div>
+                    <label class="font-bold text-lg">El Viento a Favor (¿Qué salió bien?)</label>
+                    <textarea id="retro-bien" class="bitacora-textarea w-full h-20" placeholder="Ej: ¡Encontramos el One Piece (de código)!"></textarea>
+                </div>
+                <div>
+                    <label class="font-bold text-lg">El Mar Agitado (¿Qué salió mal?)</label>
+                    <textarea id="retro-mal" class="bitacora-textarea w-full h-20" placeholder="Ej: ¡Casi nos hunde un Buster Call (bug)!"></textarea>
+                </div>
+                <div>
+                    <label class="font-bold text-lg">Próxima Isla (¿Qué mejorar?)</label>
+                    <textarea id="retro-mejorar" class="bitacora-textarea w-full h-20" placeholder="Ej: ¡Necesitamos más CARNE (tests)!"></textarea>
+                </div>
+                <button id="archive-retro" class="boton-archivar w-full">
+                    ¡Archivar Bitácora! (¡Ganar +250 $Berries!)
+                </button>
+            </div>
+        </div>
+
+        <div id="window-kairoseki" class="window fixed top-40 left-1/3 w-[500px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>⛓️ KAIROSEKI.SYS (Ajustes) ⛓️</span>
+                <button class="window-close">X</button>
+            </div>
+            <div class="p-4 space-y-4">
+                <h3 class="text-xl font-bold">Control del Shell</h3>
+                <div class="flex space-x-4">
+                    <button id="toggle-haki" class="p-3 bg-indigo-500 text-white font-bold rounded border-4 border-black">Activar Haki</button>
+                    <button id="trigger-kintsugi" class="p-3 bg-yellow-400 text-black font-bold rounded border-4 border-black">Simular Error Kintsugi</button>
+                    <button id="trigger-don" class="p-3 bg-red-500 text-white font-bold rounded border-4 border-black">Simular DON!</button>
+                </div>
+                 <h3 class="text-xl font-bold">Control del Compañero</h3>
+                 <div class="flex space-x-4">
+                    <button id="toggle-pet-mode" class="p-3 bg-gray-500 text-white font-bold rounded border-4 border-black">Modo: EstrateGA</button>
+                    <button id="add-bond-exp" class="p-3 bg-blue-500 text-white font-bold rounded border-4 border-black">+10 EXP Vínculo</button>
+                 </div>
+                 <h3 class="text-xl font-bold">Control del DEN-DEN MUSHI</h3>
+                 <div class="flex space-x-4">
+                    <button id="trigger-notification" class="p-3 bg-green-500 text-white font-bold rounded border-4 border-black">Mensaje Normal</button>
+                    <button id="trigger-vip-notification" class="p-3 bg-red-600 text-white font-bold rounded border-4 border-black">¡Buster Call! (VIP)</button>
+                 </div>
+            </div>
+        </div>
+        
+        <div id="window-cofre" class="window fixed top-1/4 left-1/4 w-[600px] h-[400px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>Cofre del Tesoro (Archivos)</span>
+                <button class="window-close">X</button>
+            </div>
+            <div class="flex-grow flex flex-row h-[calc(100%-48px)]">
+                <div class="cofre-sidebar w-1/3">
+                </div>
+                <div class="cofre-content w-2/3">
+                </div>
+            </div>
+            <div class="kintsugi-overlay hidden absolute inset-0 overflow-hidden">
+                <div class="crack crack-1"></div>
+                <div class="crack crack-2"></div>
+                <div class="crack crack-3"></div>
+            </div>
+        </div>
+        
+        <div id="window-dao" class="window fixed top-1/3 left-1/2 w-[400px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>NAKAMA.DAO (Gran Flota)</span>
+                <button class="window-close">X</button>
+            </div>
+            <div class="p-4 flex flex-col items-center">
+                <span class="text-7xl mb-4">🏴‍☠️</span>
+                <h3 class="text-2xl font-bold">La Gran Flota</h3>
+                <p class="text-center">¡Vota en las propuestas de la tripulación! Tu Bounty Score ($Berries) es tu poder.</p>
+                <div class="mt-4 p-4 cartel-se-busca w-full">
+                    <h2 class="cartel-header">SE BUSCA</h2>
+                    <div class="w-32 h-32 bg-gray-400 mx-auto my-2 border-4 border-black text-center flex items-center justify-center text-gray-700">Tu Foto</div>
+                    <p class="text-center font-bold text-xl">CAPITÁN</p>
+                    <p class="text-center font-bold text-3xl" id="dao-bounty-label">0 $Berries</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="window-flota" class="window fixed top-1/2 left-1/3 w-[500px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>Flota Aliada (Ecosistema)</span>
+                <button class="window-close">X</button>
+            </div>
+            <div class="p-4 grid grid-cols-3 gap-4">
+                <div class="flex flex-col items-center p-4 bg-amber-100 border-4 border-black rounded">
+                    <span class="text-5xl">🎭</span>
+                    <span class="font-bold">razAzar.shop</span>
+                </div>
+                
+                <div class="flex flex-col p-4 bg-amber-100 border-4 border-black rounded">
+                    <div class="flex flex-col items-center mb-2">
+                        <span class="text-5xl">🥁</span>
+                        <span class="font-bold">Tunova.io</span>
+                    </div>
+                    <ul class="list-disc list-inside text-xs space-y-1 text-left">
+                        <li class="font-bold">📻 Radio Pirata</li>
+                        <li class="pl-2">(Próximos Hits)</li>
+                        <li class="font-bold">🎶 Playlists Nakamas</li>
+                        <li class="pl-2">(Sube tus mixes)</li>
+                    </ul>
+                </div>
+                
+                <div class="flex flex-col items-center p-4 bg-amber-100 border-4 border-black rounded">
+                    <span class="text-5xl">🏎️</span>
+                    <span class="font-bold">TRB</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="window-taberna" class="window fixed top-20 left-1/3 w-[380px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>🍻 Salas de La Taberna</span>
+                <button class="window-close">X</button>
+            </div>
+            <div class="p-4">
+                <div class="flex items-center p-2 bg-amber-100 border-4 border-black rounded mb-4">
+                    <span class="text-4xl">🏴‍☠️</span>
+                    <div class="ml-2">
+                        <span class="font-bold text-lg">Capitán</span>
+                        <select class="text-sm border-2 border-black rounded">
+                            <option value="online">🟢 Conectado</option>
+                            <option value="away">🟡 Buscando Tesoro</option>
+                            <option value="offline">🔴 Desconectado</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="nakama-list">
+                    <div class="nakama-category">Salas Comunes</div>
+                    <div class="room-item nakama-item" data-name="Sala de Luffy">
+                        <span class="text-xl mr-2">🍖</span>Sala de Luffy
+                    </div>
+                    <div class="room-item nakama-item" data-name="Sala de Nami">
+                        <span class="text-xl mr-2">🍊</span>Sala de Nami
+                    </div>
+                    <div class="room-item nakama-item" data-name="Sala de Zoro">
+                        <span class="text-xl mr-2">⚔️</span>Sala de Zoro
+                    </div>
+                    
+                    <div class="nakama-category">Mar Abierto</div>
+                    <div class="room-item nakama-item opacity-50 cursor-not-allowed" data-name="Mary Geoise">
+                        <span class="text-xl mr-2">👑</span>Mary Geoise (Bloqueado)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="window-personalizar" class="window fixed top-1/4 left-1/4 w-[450px] z-50 hidden">
+            <div class="window-titlebar flex justify-between items-center">
+                <span>🎨 Taller del Carpintero</span>
+                <button class="window-close">X</button>
+            </div>
+            <div class="p-4 space-y-4">
+                <h3 class="text-xl font-bold">Fondo de Escritorio (El Mar)</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button id="set-bg-mar" class="boton-personalizar bg-blue-400 text-white flex-1">Mar Abierto</button>
+                    <button id="set-bg-atardecer" class="boton-personalizar bg-orange-500 text-white flex-1">Atardecer</button>
+                    <button id="set-bg-noche" class="boton-personalizar bg-indigo-900 text-white flex-1">Noche</button>
+                    <button id="set-bg-crew-1" class="boton-personalizar bg-cyan-500 text-white flex-1">Tripulación</button>
+                    <button id="set-bg-crew-2" class="boton-personalizar bg-red-400 text-white flex-1">Nakamas</button>
+                    <button id="set-bg-luffy-epic" class="boton-personalizar bg-amber-800 text-white flex-1">Luffy</button>
+                    <button id="set-bg-map" class="boton-personalizar bg-purple-600 text-white flex-1">Mapa</button>
+                </div>
+                <h3 class="text-xl font-bold">Cursor Pirata</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button id="set-cursor-default" class="boton-personalizar bg-gray-300 text-black flex-1">🖐️ Normal</button>
+                    <button id="set-cursor-luffy-flag" class="boton-personalizar bg-red-500 text-white flex-1">🏴‍☠️ Luffy</button>
+                    <button id="set-cursor-luffy-hat" class="boton-personalizar bg-yellow-500 text-white flex-1">🎩 Sombrero</button>
+                    <button id="set-cursor-law-sword" class="boton-personalizar bg-purple-600 text-white flex-1">⚔️ Law</button>
+                    <button id="set-cursor-luffy-gear2" class="boton-personalizar bg-orange-600 text-white flex-1">🔥 Gear 2</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="puerto fixed bottom-0 left-0 right-0 z-40 flex justify-center items-center space-x-4 p-3 h-28">
+        <div id="dock-missions" class="dock-icon rounded-lg" title="Tablón de Recompensas">
+            <img src="/icons/nakama/app/1.png" alt="Tablón de Recompensas" class="w-full h-full object-contain">
+        </div>
+        <div id="dock-retro" class="dock-icon rounded-lg" title="Bitácora de Capitán (Retro)">
+            <img src="/icons/nakama/app/2.png" alt="Bitácora de Capitán" class="w-full h-full object-contain">
+        </div>
+        <div id="dock-taberna" class="dock-icon rounded-lg" title="La Taberna (Chat)">
+            <img src="/icons/nakama/app/3.png" alt="La Taberna" class="w-full h-full object-contain">
+        </div>
+        <div id="dock-cofre" class="dock-icon rounded-lg" title="Cofre del Tesoro">
+            <img src="/icons/nakama/app/4.png" alt="Cofre del Tesoro" class="w-full h-full object-contain">
+        </div>
+        <div id="dock-kairoseki" class="dock-icon rounded-lg" title="KAIROSEKI.SYS (Ajustes)">
+            <img src="/icons/nakama/app/5.png" alt="KAIROSEKI.SYS" class="w-full h-full object-contain">
+        </div>
+        <div id="dock-personalizar" class="dock-icon rounded-lg" title="Taller (Personalización)">
+            <img src="/icons/nakama/app/6.png" alt="Taller del Carpintero" class="w-full h-full object-contain">
+        </div>
+        <div id="dock-dao" class="dock-icon rounded-lg" title="NAKAMA.DAO (Gran Flota)">
+            <img src="/icons/nakama/app/7.png" alt="NAKAMA.DAO" class="w-full h-full object-contain">
+        </div>
+        <div id="dock-flota" class="dock-icon rounded-lg" title="Flota Aliada">
+            <img src="/icons/nakama/app/8.png" alt="Flota Aliada" class="w-full h-full object-contain">
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const GRAVITY = 0.5;
+            let panzoomInstance = null;
+            const mapContainer = document.getElementById('map-bg-container');
+            const mapImage = document.getElementById('world-map-img');
+            
+            let state = {
+                berries: 0,
+                isHaki: false,
+                petMode: 'aventurero',
+                bondLevel: 1,
+                bondExp: 0,
+                bondExpToNext: 100,
+                activeWindow: null,
+                highestZ: 50,
+                openRooms: {}
+            };
+            
+            let roomStates = {
+                "Sala de Luffy": { 
+                    owner: "Luffy", 
+                    topic: "¡¡CARNE!!",
+                    participants: ["Luffy", "Usopp", "Chopper"] 
+                },
+                "Sala de Nami": { 
+                    owner: "Nami", 
+                    topic: "¡Planes para el próximo tesoro!",
+                    participants: ["Nami", "Sanji", "Robin"] 
+                },
+                "Sala de Zoro": { 
+                    owner: "Zoro", 
+                    topic: "Dojo de entrenamiento... zzz",
+                    participants: ["Zoro", "Law", "Kid"] 
+                }
+            };
+            
+            const fileSystemData = {
+                "Mapas": {
+                    icon: '🗺️',
+                    files: [
+                        { name: "Ruta_Grand_Line.txt", type: "file", content: "¡Peligro! ¡Mar de Reyes Marinos!\n¡Seguir el Log Pose!\nIsla 1: Little Garden (Gigantes)\nIsla 2: Drum (Nieve)\nIsla 3: Alabasta (Desierto)" },
+                        { name: "Plan_Isla_del_Cielo.txt", type: "file", content: "Buscar la 'Knock Up Stream'.\n¡Cuidado con los sacerdotes de Enel!\n¡¡Encontrar la campana de oro!!" }
+                    ]
+                },
+                "La Bodega": {
+                    icon: '🍶',
+                    files: [
+                        { name: "Inventario_Sake.txt", type: "file", content: "Sake de Wano: 30 barriles\nRon de Jaya: 15 botellas\nAgua de Isla Gyojin: 2 barriles" },
+                        { name: "Receta_Sanji.txt", type: "file", content: "Curry Marino Picante:\n1. Pescado Rey Marino.\n2. Especias de Water 7.\n3. ¡Mucho amor!" }
+                    ]
+                },
+                "Bitácoras": {
+                    icon: '📜',
+                    files: [
+                        { name: "Diario_Usopp.txt", type: "file", content: "¡Hoy he derrotado a 10,000 enemigos! (Más o menos...)\n¡El gran Capitán Usopp no miente!" }
+                    ]
+                },
+                "Poneglyph": {
+                    icon: '🔏',
+                    files: [
+                        { name: "El_Siglo_Vacío.txt", type: 'secret' }
+                    ]
+                }
+            };
+            
+            const petQuotes = {
+                aventurero: [
+                    "¡¡CARNE!! ¡¡Vamos a por esa misión!!", 
+                    "¡Huele a aventura!", 
+                    "¡¡ZARPAMOS!!",
+                    "¡Seré el Rey de los... (Productivos)!"
+                ],
+                estratega: [
+                    "Fufufu... un Poneglyph interesante.", 
+                    "Keikaku doori. (Todo va según el plan.)", 
+                    "Analicemos la ruta, Capitán.",
+                    "La historia se repite. Cuidado con ese bug."
+                ]
+            };
+            
+            const desktop = document.getElementById('desktop');
+            const berriesDisplay = document.getElementById('berries-display');
+            const daoBountyLabel = document.getElementById('dao-bounty-label');
+            const donOverlay = document.getElementById('don-overlay');
+            const hakiOverlay = document.getElementById('haki-overlay');
+            
+            const petButton = document.getElementById('pet-button');
+            const petWindow = document.getElementById('window-pet');
+            const petAvatarHeader = document.getElementById('pet-avatar-header');
+            const petAvatarMain = document.getElementById('pet-avatar-main');
+            const petModeLabel = document.getElementById('pet-mode');
+            const petQuoteLabel = document.getElementById('pet-quote');
+            const bondLevelLabel = document.getElementById('bond-level-label');
+            const bondProgress = document.getElementById('bond-progress');
+            
+            const denDenButton = document.getElementById('den-den-button');
+            const denDenWindow = document.getElementById('window-den-den');
+            const denDenContent = document.getElementById('den-den-content');
+
+            function triggerDON() {
+                donOverlay.classList.add('don-active');
+                setTimeout(() => {
+                    donOverlay.classList.remove('don-active');
+                }, 1000);
+            }
+            
+            function toggleHaki() {
+                state.isHaki = !state.isHaki;
+                document.body.classList.toggle('haki-on');
+                hakiOverlay.classList.toggle('hidden');
+                hakiOverlay.style.opacity = state.isHaki ? '1' : '0';
+                
+                if (state.activeWindow) {
+                    state.activeWindow.classList.add('window-active');
+                }
+                
+                document.getElementById('toggle-haki').innerText = state.isHaki ? 'Desactivar Haki' : 'Activar Haki';
+            }
+            
+            function triggerKintsugi() {
+                const cofreWindow = document.getElementById('window-cofre');
+                if (cofreWindow.style.display !== 'block') {
+                    initFileExplorer();
+                }
+                
+                const overlay = cofreWindow.querySelector('.kintsugi-overlay');
+                overlay.classList.remove('hidden');
+                
+                let msg = "";
+                if (state.petMode === 'estratega') {
+                     msg = "Fufufu... este Poneglyph... no se puede leer. Está roto.";
+                } else {
+                     msg = "¡¡Waaah!! ¡Esta piedra está rota! ¡Pero brilla! ¡¡GENIAL!!";
+                }
+                showNotification(msg, 'vip');
+                
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 3000);
+            }
+            
+            function showNotification(message, type = 'normal') {
+                if (denDenContent.innerHTML.includes('...Zzz... Zzz...')) {
+                    denDenContent.innerHTML = '';
+                }
+                
+                const msgEl = document.createElement('div');
+                msgEl.className = 'p-2 rounded border-2 border-black';
+                msgEl.innerText = message;
+                
+                if (type === 'vip') {
+                    msgEl.classList.add('bg-red-200', 'border-red-600', 'font-bold');
+                    denDenButton.classList.add('ring');
+                    setTimeout(() => denDenButton.classList.remove('ring'), 2000);
+                } else {
+                    msgEl.classList.add('bg-green-100', 'border-green-400');
+                }
+                
+                denDenContent.prepend(msgEl);
+            }
+
+            function openWindow(id) {
+                const windowEl = document.getElementById(id);
+                windowEl.style.display = 'block';
+                bringToFront(windowEl);
+            }
+            
+            function closeWindow(e) {
+                e.target.closest('.window').style.display = 'none';
+            }
+            
+            function bringToFront(windowEl) {
+                state.highestZ++;
+                windowEl.style.zIndex = state.highestZ;
+                
+                document.querySelectorAll('.window').forEach(w => w.classList.remove('window-active'));
+                state.activeWindow = windowEl;
+                
+                if (state.isHaki) {
+                    windowEl.classList.add('window-active');
+                }
+            }
+            
+            function makeDraggable(windowEl) {
+                const titlebar = windowEl.querySelector('.window-titlebar');
+                if (!titlebar) return;
+
+                let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                
+                titlebar.onmousedown = dragMouseDown;
+
+                function dragMouseDown(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    bringToFront(windowEl);
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    windowEl.style.top = (windowEl.offsetTop - pos2) + "px";
+                    windowEl.style.left = (windowEl.offsetLeft - pos1) + "px";
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+                }
+            }
+
+            function updatePetUI() {
+                const modeText = state.petMode.charAt(0).toUpperCase() + state.petMode.slice(1);
+                petModeLabel.innerText = `Modo: ${modeText}`;
+                
+                const avatar = state.petMode === 'aventurero' ? '👊' : '🧐';
+                petAvatarHeader.innerText = avatar;
+                petAvatarMain.innerText = avatar;
+                
+                petQuoteLabel.innerText = petQuotes[state.petMode][Math.floor(Math.random() * petQuotes[state.petMode].length)];
+                document.getElementById('toggle-pet-mode').innerText = `Modo: ${state.petMode === 'aventurero' ? 'Estratega' : 'Aventurero'}`;
+
+                bondLevelLabel.innerText = state.bondLevel;
+                const progressPct = (state.bondExp / state.bondExpToNext) * 100;
+                bondProgress.style.width = `${progressPct}%`;
+                
+                let levelTier = 1;
+                if (state.bondLevel >= 50) levelTier = 50;
+                else if (state.bondLevel >= 30) levelTier = 30;
+                else if (state.bondLevel >= 10) levelTier = 10;
+                petAvatarMain.dataset.bondLevel = levelTier;
+            }
+            
+            function togglePetMode() {
+                state.petMode = state.petMode === 'aventurero' ? 'estratega' : 'aventurero';
+                updatePetUI();
+            }
+            
+            function addBondExp(exp) {
+                state.bondExp += exp;
+                if (state.bondExp >= state.bondExpToNext) {
+                    state.bondLevel++;
+                    state.bondExp = 0;
+                    state.bondExpToNext = Math.floor(state.bondExpToNext * 1.5);
+                    showNotification(`¡Tu vínculo con tu Nakama ha subido al Nivel ${state.bondLevel}!`, 'normal');
+                }
+                updatePetUI();
+            }
+
+            function updateBerries(amount) {
+                state.berries += amount;
+                berriesDisplay.innerText = `${state.berries} $Berries`;
+                daoBountyLabel.innerText = `${state.berries} $Berries`;
+            }
+            
+            function addMission() {
+                const input = document.getElementById('mission-input');
+                const text = input.value.trim();
+                if (text === "") return;
+                
+                const bounty = text.length * 10 + Math.floor(Math.random() * 50); 
+                
+                const missionEl = document.createElement('div');
+                missionEl.className = 'cartel-se-busca p-4';
+                missionEl.innerHTML = `
+                    <h3 class="cartel-header">SE BUSCA</h3>
+                    <div class="w-20 h-20 bg-gray-400 mx-auto my-2 border-4 border-black text-center flex items-center justify-center text-gray-700 text-xs">FOTO</div>
+                    <p class="text-lg my-2 text-center font-bold">${text}</p>
+                    <p class="text-center font-bold text-xl">RECOMPENSA: ${bounty} $Berries</p>
+                    <button class="boton-capturado w-full mt-2">¡¡CAPTURADO!!</button>
+                `;
+                
+                missionEl.querySelector('.boton-capturado').onclick = () => {
+                    updateBerries(bounty);
+                    missionEl.remove();
+                    triggerDON();
+                };
+                
+                document.getElementById('mission-list').prepend(missionEl);
+                input.value = '';
+            }
+            
+            function archiveRetro() {
+                const txtBien = document.getElementById('retro-bien');
+                const txtMal = document.getElementById('retro-mal');
+                const txtMejorar = document.getElementById('retro-mejorar');
+                
+                if (txtBien.value.trim() === '' || txtMal.value.trim() === '' || txtMejorar.value.trim() === '') {
+                    showNotification('¡Capitán, debes rellenar toda la bitácora!', 'vip');
+                    return;
+                }
+                
+                const bonus = 250;
+                updateBerries(bonus);
+                triggerDON();
+                showNotification(`¡Bitácora archivada! ¡Has ganado ${bonus} $Berries por tu sabiduría de Capitán!`, 'normal');
+                
+                txtBien.value = '';
+                txtMal.value = '';
+                txtMejorar.value = '';
+                
+                closeWindow({ target: document.getElementById('archive-retro') });
+            }
+            
+            function initFileExplorer() {
+                const cofreWindow = document.getElementById('window-cofre');
+                openWindow('window-cofre');
+                
+                const folderList = cofreWindow.querySelector('.cofre-sidebar');
+                
+                if (folderList.dataset.initialized) {
+                    bringToFront(cofreWindow);
+                    return;
+                }
+                folderList.dataset.initialized = 'true';
+                
+                folderList.innerHTML = '';
+                
+                Object.keys(fileSystemData).forEach(folderName => {
+                    const folder = fileSystemData[folderName];
+                    const listItem = document.createElement('div');
+                    listItem.className = 'folder-item';
+                    listItem.dataset.folder = folderName;
+                    listItem.innerHTML = `<span class="mr-2">${folder.icon}</span> ${folderName}`;
+                    
+                    listItem.onclick = () => {
+                        folderList.querySelectorAll('.folder-item').forEach(f => f.classList.remove('active'));
+                        listItem.classList.add('active');
+                        loadFolderContents(folderName, cofreWindow);
+                    };
+                    
+                    folderList.appendChild(listItem);
+                });
+                
+                folderList.querySelector('.folder-item').classList.add('active');
+                loadFolderContents('Mapas', cofreWindow);
+            }
+            
+            function loadFolderContents(folderName, cofreWindow) {
+                const filePanel = cofreWindow.querySelector('.cofre-content');
+                filePanel.innerHTML = '';
+                const folder = fileSystemData[folderName];
+                
+                if (!folder) return;
+                
+                folder.files.forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    
+                    let icon = '📄';
+                    if (file.type === 'secret') icon = '🔏';
+                    
+                    fileItem.innerHTML = `<span class="file-icon">${icon}</span> ${file.name}`;
+                    
+                    fileItem.onclick = () => {
+                        if (file.type === 'file') {
+                            openFileViewer(file);
+                        } else if (file.type === 'secret') {
+                            triggerKintsugi();
+                        }
+                    };
+                    filePanel.appendChild(fileItem);
+                });
+            }
+            
+            function openFileViewer(file) {
+                const viewerId = `viewer-${file.name.replace(/[.\s]/g, '-')}`;
+                
+                if (document.getElementById(viewerId)) {
+                    bringToFront(document.getElementById(viewerId));
+                    return;
+                }
+
+                const viewerWindow = document.createElement('div');
+                viewerWindow.id = viewerId;
+                viewerWindow.className = 'window fixed top-1/3 left-1/3 w-[500px] h-[350px]';
+                viewerWindow.style.display = 'block';
+                
+                const safeContent = file.content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                
+                viewerWindow.innerHTML = `
+                    <div class="window-titlebar flex justify-between items-center">
+                        <span>Visor: ${file.name}</span>
+                        <button class="window-close">X</button>
+                    </div>
+                    <pre class="window-visor w-full h-[calc(100%-48px)] overflow-auto">${safeContent}</pre>
+                `;
+                
+                desktop.appendChild(viewerWindow);
+                
+                viewerWindow.querySelector('.window-close').onclick = (e) => {
+                    viewerWindow.remove();
+                };
+                makeDraggable(viewerWindow);
+                viewerWindow.addEventListener('mousedown', () => bringToFront(viewerWindow), true);
+                bringToFront(viewerWindow);
+            }
+
+            const nakamaReplies = {
+                "Luffy": ["¡CARNE!", "¡Aventuuuuura!", "¡¡Gomu Gomu no...!!"],
+                "Zoro": ["...", "Me perdí.", "¿Sake?", "Entrenando."],
+                "Nami": ["¡Eso costará 100,000 Berries!", "¡Cállate y rema!", "¡Tengo un plan para hacer dinero!"],
+                "Usopp": ["¡¡Tengo un ejército de 8,000 hombres!!", "¡U... Usopp... Hammer!", "¡No puedo ir a esa isla!"],
+                "Sanji": ["¡Nami-swaaan! ¡Robin-chwaaan! 😍", "¡Comida lista!", "¡¡No malgastes la comida!!"],
+                "Chopper": ["¡Soy un doctor!", "¡Idiota! ¡Que me llames reno no me hace feliz! *bailando*"],
+                "Robin": ["Fufufu...", "La historia es interesante.", "El Poneglyph..."],
+                "Law": ["Room.", "Shambles.", "La D. volverá a causar una tormenta."],
+                "Kid": ["¡Mi recompensa es mayor que la tuya!", "¡¡Basura!!"]
+            };
+
+            function openRoomWindow(roomName) {
+                const roomId = `room-${roomName.replace(/\s+/g, '-')}`;
+                
+                if (state.openRooms[roomId]) {
+                    bringToFront(document.getElementById(roomId));
+                    return;
+                }
+                
+                state.openRooms[roomId] = true;
+
+                const chatWindow = document.createElement('div');
+                chatWindow.id = roomId;
+                chatWindow.className = 'window chat-window fixed top-1/3 left-1/3 w-[600px] h-[450px]';
+                chatWindow.style.top = `${Math.random() * 20 + 10}%`;
+                chatWindow.style.left = `${Math.random() * 30 + 15}%`;
+                chatWindow.style.display = 'block'; 
+                
+                chatWindow.innerHTML = `
+                    <div class="window-titlebar flex justify-between items-center">
+                        <span>🍻 ${roomName} 🍻</span>
+                        <button class="window-close">X</button>
+                    </div>
+                    <div class="flex-grow flex flex-row h-[calc(100%-48px)]">
+                        <div class="chat-main-area p-4 h-full">
+                            <div class="chat-topic msg-topic">
+                                Tema: ${roomStates[roomName].topic}
+                            </div>
+                            <div class="chat-messages flex-grow h-[calc(100%-100px)]">
+                            </div>
+                            <div class="chat-input-area">
+                                <input type="text" class="chat-input" placeholder="Escribe tu mensaje o un /comando...">
+                                <button class="boton-enviar">🏴‍☠️</button>
+                                <button class="boton-zumbido">💥</button>
+                            </div>
+                        </div>
+                        <div class="chat-sidebar participant-list h-full">
+                            <h4>Tripulación en Sala</h4>
+                        </div>
+                    </div>
+                `;
+
+                desktop.appendChild(chatWindow);
+                
+                const closeBtn = chatWindow.querySelector('.window-close');
+                closeBtn.onclick = (e) => {
+                    delete state.openRooms[roomId];
+                    chatWindow.remove();
+                };
+
+                const input = chatWindow.querySelector('.chat-input');
+                const sendBtn = chatWindow.querySelector('.boton-enviar');
+                const zumbidoBtn = chatWindow.querySelector('.boton-zumbido');
+                const messagesDiv = chatWindow.querySelector('.chat-messages');
+                
+                updateParticipantList(chatWindow, roomName);
+
+                const sendMessage = () => {
+                    const text = input.value.trim();
+                    if (text === '') return;
+
+                    if (text.startsWith('/')) {
+                        executeScriptWar(text, chatWindow, roomName);
+                        input.value = '';
+                        return;
+                    }
+                    
+                    messagesDiv.innerHTML += `<div class="msg-tu">Tú (Capitán): ${text}</div>`;
+                    input.value = '';
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    
+                    setTimeout(() => {
+                        const room = roomStates[roomName];
+                        const randomNakama = room.participants[Math.floor(Math.random() * room.participants.length)];
+                        
+                        const replies = nakamaReplies[randomNakama] || ["..."];
+                        const reply = replies[Math.floor(Math.random() * replies.length)];
+                        
+                        messagesDiv.innerHTML += `<div class="msg-nakama">${randomNakama}: ${reply}</div>`;
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        
+                        if (state.activeWindow !== chatWindow) {
+                            showNotification(`Nuevo mensaje en ${roomName}`, 'normal');
+                        }
+
+                        if (Math.random() < 0.2) {
+                            setTimeout(() => {
+                                messagesDiv.innerHTML += `<div class="msg-nakama text-red-500 font-black">¡¡${randomNakama.toUpperCase()} TE HA DEVUELTO EL ZUMBIDO!!</div>`;
+                                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                                bringToFront(chatWindow);
+                                chatWindow.classList.add('shake-zumbido');
+                                setTimeout(() => chatWindow.classList.remove('shake-zumbido'), 500);
+                            }, 500);
+                        }
+
+                    }, 1500);
+                };
+
+                input.onkeyup = (e) => { if (e.key === 'Enter') sendMessage(); };
+                sendBtn.onclick = sendMessage;
+                
+                zumbidoBtn.onclick = () => {
+                    messagesDiv.innerHTML += `<div class="msg-tu text-red-500 font-black">¡¡¡HAS ENVIADO UN ZUMBIDO!!!</div>`;
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                };
+                
+                makeDraggable(chatWindow);
+                chatWindow.addEventListener('mousedown', () => bringToFront(chatWindow), true);
+                bringToFront(chatWindow);
+            }
+            
+            function updateParticipantList(windowEl, roomName) {
+                const room = roomStates[roomName];
+                const sidebar = windowEl.querySelector('.participant-list');
+                
+                let html = '<h4>Tripulación en Sala</h4>';
+                
+                html += `
+                    <div class="participant-item">
+                        <span class="owner-badge">👑</span> ${room.owner} (Dueño)
+                    </div>
+                `;
+                
+                if (room.owner !== "Tú (Capitán)") {
+                     html += `
+                        <div class="participant-item">
+                            🏴‍☠️ Tú (Capitán)
+                        </div>
+                    `;
+                }
+
+                room.participants.forEach(p => {
+                    if (p !== room.owner && p !== "Tú (Capitán)") {
+                        html += `<div class="participant-item">${p}</div>`;
+                    }
+                });
+                
+                sidebar.innerHTML = html;
+            }
+
+            function executeScriptWar(command, windowEl, roomName) {
+                const messagesDiv = windowEl.querySelector('.chat-messages');
+                const input = windowEl.querySelector('.chat-input');
+                const room = roomStates[roomName];
+                const isOwner = (room.owner === "Tú (Capitán)");
+
+                const postMsg = (html) => {
+                    messagesDiv.innerHTML += html;
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                };
+                
+                if (command.startsWith('/kick')) {
+                    if (!isOwner) {
+                        postMsg(`<div class="msg-nakama">¡¡Solo el Dueño de la sala puede usar /kick!!</div>`);
+                        return;
+                    }
+                    const target = command.split(' ')[1] || 'Usopp';
+                    postMsg(`<div class="msg-system">¡¡${target} ha sido pateado de la sala por el Dueño!!</div>`);
+                    return;
+                }
+                
+                if (command.startsWith('/changetopic')) {
+                    if (!isOwner) {
+                        postMsg(`<div class="msg-nakama">¡¡Solo el Dueño de la sala puede cambiar el tema!!</div>`);
+                        return;
+                    }
+                    const newTopic = command.substring(13).trim() || "¡El Dueño es genial!";
+                    room.topic = newTopic;
+                    windowEl.querySelector('.chat-topic').innerText = `Tema: ${newTopic}`;
+                    postMsg(`<div class="msg-system">¡El Dueño ha cambiado el tema a: "${newTopic}"!</div>`);
+                    return;
+                }
+
+                messagesDiv.innerHTML += `<div class="msg-ataque">¡¡Has usado ${command}!!</div>`;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                
+                let replyMsg = "...";
+
+                switch (command.toLowerCase()) {
+                    case '/challenge':
+                        if (isOwner) {
+                            postMsg(`<div class="msg-system">¡Ya eres el Dueño de la sala, Capitán!</div>`);
+                            return;
+                        }
+                        const currentOwner = room.owner;
+                        postMsg(`<div class="msg-system">¡¡DUELO DE HAKI!! ¡Tú (Capitán) vs ${currentOwner}!</div>`);
+                        input.disabled = true;
+                        input.placeholder = "¡¡CHOQUE DE HAKI!!";
+                        
+                        setTimeout(() => postMsg(`<div class="msg-don">DON!</div>`), 1000);
+                        setTimeout(() => postMsg(`<div class="msg-don">DON!</div>`), 2000);
+                        setTimeout(() => postMsg(`<div class="msg-don">DON!</div>`), 3000);
+                        
+                        setTimeout(() => {
+                            if (Math.random() > 0.4) { 
+                                postMsg(`<div class="msg-system" style="color: green; border-color: green;">¡¡VICTORIA!! ¡El Haki del Capitán es supremo!</div>`);
+                                postMsg(`<div class="msg-system">¡¡Tú (Capitán) eres el nuevo Dueño de la Sala!!</div>`);
+                                room.owner = "Tú (Capitán)";
+                                updateParticipantList(windowEl, roomName);
+                            } else {
+                                postMsg(`<div class="msg-system" style="color: red; border-color: red;">¡¡DERROTA!! ¡${currentOwner} ha resistido tu Haki!</div>`);
+                            }
+                            input.disabled = false;
+                            input.placeholder = "Escribe tu mensaje o un /comando...";
+                        }, 4000);
+                        return;
+
+                    case '/shambles':
+                        const randomColor = `hsl(${Math.floor(Math.random() * 360)}, 70%, 80%)`;
+                        messagesDiv.style.backgroundColor = randomColor;
+                        replyMsg = "¡¡Has cambiado mi taberna de color!! ¡ROOM!";
+                        break;
+                        
+                    case '/conqueror':
+                        input.disabled = true;
+                        input.placeholder = "¡¡HAKI!!";
+                        let i = 0;
+                        const flood = setInterval(() => {
+                            if (i >= 5) {
+                                clearInterval(flood);
+                                input.disabled = false;
+                                input.placeholder = "Escribe tu mensaje o un /comando...";
+                            } else {
+                                postMsg(`<div class="msg-don">DON!</div>`);
+                                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                                i++;
+                            }
+                        }, 300);
+                        replyMsg = "¡Grr! ¡Tu Haki es poderoso...!";
+                        break;
+                        
+                    case '/geppo':
+                        windowEl.classList.add('geppo-jump');
+                        setTimeout(() => windowEl.classList.remove('geppo-jump'), 1000);
+                        replyMsg = "¡Deja de mover el barco!";
+                        break;
+
+                    case '/diablejambe':
+                        windowEl.classList.add('chat-fire-effect');
+                        setTimeout(() => windowEl.classList.remove('chat-fire-effect'), 3000);
+                        replyMsg = "¡ME QUEMAS! ¡¡COCINERO DE PACOTILLA!!";
+                        break;
+
+                    default:
+                        messagesDiv.innerHTML += `<div class="msg-nakama">¿Qué? ¡Esa Fruta del Diablo no existe!</div>`;
+                        return;
+                }
+                
+                setTimeout(() => {
+                    const randomNakama = room.participants[Math.floor(Math.random() * room.participants.length)];
+                    messagesDiv.innerHTML += `<div class="msg-nakama">${randomNakama}: ${replyMsg}</div>`;
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                }, 1000);
+            }
+
+            function setWallpaper(className) {
+                if (panzoomInstance) {
+                    panzoomInstance.dispose();
+                    panzoomInstance = null;
+                    mapContainer.classList.add('hidden');
+                }
+
+                document.body.style.background = '';
+                document.body.className = className;
+
+                if (className === 'bg-mapa-interactivo') {
+                    document.body.style.background = 'none';
+                    mapContainer.classList.remove('hidden');
+                    panzoomInstance = panzoom(mapImage, {
+                        maxZoom: 5,
+                        minZoom: 0.8,
+                        initialZoom: 1,
+                        bounds: true,
+                        boundsPadding: 0.1,
+                    });
+                }
+            }
+
+            function setCursor(cursorName) {
+                // Remover todas las clases de cursor personalizadas
+                document.body.classList.remove('cursor-luffy-flag', 'cursor-luffy-hat', 'cursor-law-sword', 'cursor-luffy-gear2');
+                
+                // Si es un cursor personalizado de One Piece, agregar la clase
+                if (cursorName.startsWith('cursor-')) {
+                    document.body.classList.add(cursorName);
+                } else {
+                    // Cursor CSS estándar
+                    document.body.style.cursor = cursorName;
+                }
+                
+                // Guardar en localStorage
+                localStorage.setItem('nakama-cursor', cursorName);
+            }
+            
+            const buddyAnimations = {
+                luffy: {
+                    idle:    { row: 0, frames: 6, speed: 8 },
+                    walking: { row: 0, frames: 6, speed: 5 },
+                    falling: { row: 0, frames: 6, speed: 4 },
+                    landing: { row: 0, frames: 6, speed: 4, next: 'idle' }
+                },
+                nami: {
+                    idle:    { row: 0, frames: 6, speed: 8 },
+                    walking: { row: 0, frames: 6, speed: 5 },
+                    falling: { row: 0, frames: 6, speed: 4 },
+                    landing: { row: 0, frames: 6, speed: 4, next: 'idle' }
+                }
+            };
+            
+            let buddies = [];
+
+            function initBuddies() {
+                const luffyBuddyEl = document.getElementById('luffy-buddy');
+                const namiBuddyEl = document.getElementById('nami-buddy');
+                const footer = document.querySelector('.puerto');
+                const mainGroundY = footer.offsetTop;
+                
+                buddies = [
+                    {
+                        el: luffyBuddyEl, x: 100, y: mainGroundY - 50, vx: 0, vy: 0,
+                        state: 'idle', timer: 500, groundY: mainGroundY,
+                        anim: { frame: 0, counter: 0 }
+                    },
+                    {
+                        el: namiBuddyEl, x: 300, y: mainGroundY - 50, vx: 0, vy: 0,
+                        state: 'idle', timer: 500, groundY: mainGroundY,
+                        anim: { frame: 0, counter: 0 }
+                    }
+                ];
+                
+                updateBuddies();
+            }
+
+            function updateBuddies() {
+                const footer = document.querySelector('.puerto');
+                const mainGroundY = footer.offsetTop;
+                const buddySize = 50;
+                const screenWidth = window.innerWidth;
+                const visibleWindows = Array.from(document.querySelectorAll('.window:not([style*="display: none"])'));
+
+                buddies.forEach(buddy => {
+                    const wasFalling = buddy.state === 'falling';
+                    buddy.timer--;
+                    
+                    if (buddy.timer <= 0 && buddy.state !== 'falling' && buddy.state !== 'landing') {
+                        const action = Math.random();
+                        if (action < 0.001) {
+                            buddy.state = 'walking';
+                            buddy.vx = (Math.random() - 0.5) * 1;
+                            buddy.timer = 100 + Math.random() * 100;
+                        } else {
+                            buddy.state = 'idle';
+                            buddy.vx = 0;
+                            buddy.timer = 500 + Math.random() * 500;
+                        }
+                    } else if (buddy.timer <= 0) {
+                        buddy.timer = 10;
+                    }
+
+                    if (buddy.state !== 'walking') {
+                        buddy.vx = 0;
+                    }
+
+                    buddy.vy += GRAVITY;
+                    buddy.x += buddy.vx;
+                    buddy.y += buddy.vy;
+
+                    let onSurface = false;
+                    
+                    for (const win of visibleWindows) {
+                        const winRect = win.getBoundingClientRect();
+                        if (buddy.vy > 0 &&
+                            (buddy.x + buddySize * 0.8) > winRect.left && 
+                            (buddy.x + buddySize * 0.2) < winRect.right &&
+                            (buddy.y + buddySize) >= winRect.top &&
+                            buddy.y < winRect.top) {
+                            
+                            buddy.y = winRect.top - buddySize;
+                            buddy.vy = 0;
+                            buddy.groundY = winRect.top;
+                            onSurface = true;
+                            break;
+                        }
+                    }
+
+                    if (!onSurface && (buddy.y + buddySize) >= mainGroundY) {
+                        buddy.y = mainGroundY - buddySize;
+                        buddy.vy = 0;
+                        buddy.groundY = mainGroundY;
+                        onSurface = true;
+                    }
+
+                    if (onSurface) {
+                        if (wasFalling) {
+                            buddy.state = 'landing';
+                            buddy.anim.frame = 0;
+                            buddy.anim.counter = 0;
+                        }
+                    } else {
+                        if (buddy.state !== 'falling' && buddy.state !== 'landing') {
+                            buddy.state = 'falling';
+                            buddy.groundY = null;
+                            buddy.anim.frame = 0;
+                            buddy.anim.counter = 0;
+                        }
+                    }
+                    
+                    if (buddy.x < 0) {
+                        buddy.x = 0;
+                        if (buddy.vx < 0) buddy.vx *= -1;
+                    }
+                    if (buddy.x > screenWidth - buddySize) {
+                        buddy.x = screenWidth - buddySize;
+                        if (buddy.vx > 0) buddy.vx *= -1;
+                    }
+                    
+                    updateBuddySprite(buddy);
+                    
+                    let scaleX = buddy.el.style.transform.match(/scaleX\(([-0-9.]+)\)/);
+                    scaleX = scaleX ? parseFloat(scaleX[1]) : 1;
+                    if (buddy.vx > 0.1) {
+                        scaleX = -1; 
+                    } else if (buddy.vx < -0.1) {
+                        scaleX = 1;
+                    }
+                    buddy.el.style.transform = `translate(${buddy.x}px, ${buddy.y}px) scaleX(${scaleX})`;
+                });
+
+                requestAnimationFrame(updateBuddies);
+            }
+
+            function updateBuddySprite(buddy) {
+                const BUDDY_SIZE = 50;
+                const buddyName = buddy.el.id.split('-')[0];
+                const animSet = buddyAnimations[buddyName];
+                
+                if (!animSet || !animSet[buddy.state]) return;
+
+                let currentAnim = animSet[buddy.state];
+
+                buddy.anim.counter++;
+                if (buddy.anim.counter >= currentAnim.speed) {
+                    buddy.anim.counter = 0;
+                    buddy.anim.frame++;
+                }
+
+                if (buddy.anim.frame >= currentAnim.frames) {
+                    if (currentAnim.next) {
+                        buddy.state = currentAnim.next;
+                        currentAnim = animSet[buddy.state];
+                        buddy.anim.frame = 0;
+                    } else {
+                        buddy.anim.frame = 0;
+                    }
+                }
+
+                const bgX = -(buddy.anim.frame * BUDDY_SIZE);
+                const bgY = -(currentAnim.row * BUDDY_SIZE);
+                
+                buddy.el.style.backgroundPosition = `${bgX}px ${bgY}px`;
+            }
+            
+            function init() {
+                document.getElementById('dock-missions').onclick = () => openWindow('window-missions');
+                document.getElementById('dock-retro').onclick = () => openWindow('window-retro'); 
+                document.getElementById('dock-taberna').onclick = () => openWindow('window-taberna');
+                document.getElementById('dock-cofre').onclick = () => initFileExplorer();
+                document.getElementById('dock-kairoseki').onclick = () => openWindow('window-kairoseki');
+                document.getElementById('dock-personalizar').onclick = () => openWindow('window-personalizar');
+                document.getElementById('dock-dao').onclick = () => openWindow('window-dao');
+                document.getElementById('dock-flota').onclick = () => openWindow('window-flota');
+                
+                petButton.onclick = () => openWindow('window-pet');
+                denDenButton.onclick = () => openWindow('window-den-den');
+                
+                document.querySelectorAll('.window').forEach(windowEl => {
+                    makeDraggable(windowEl);
+                    windowEl.addEventListener('mousedown', () => bringToFront(windowEl), true);
+                    windowEl.querySelector('.window-close').onclick = closeWindow;
+                });
+                
+                document.getElementById('toggle-haki').onclick = toggleHaki;
+                document.getElementById('trigger-kintsugi').onclick = triggerKintsugi;
+                document.getElementById('trigger-don').onclick = triggerDON;
+                document.getElementById('toggle-pet-mode').onclick = togglePetMode;
+                document.getElementById('add-bond-exp').onclick = () => addBondExp(30);
+                document.getElementById('trigger-notification').onclick = () => showNotification('Den Den Mushi susurrando...', 'normal');
+                document.getElementById('trigger-vip-notification').onclick = () => showNotification('¡¡DEN DEN MUSHI DE EMERGENCIA!! ¡Mensaje de la Gran Flota!', 'vip');
+                
+                document.getElementById('mission-add').onclick = addMission;
+                document.getElementById('mission-input').onkeyup = (e) => { if (e.key === 'Enter') addMission(); };
+                
+                document.getElementById('archive-retro').onclick = archiveRetro;
+                
+                document.getElementById('pet-interact').onclick = () => {
+                    addBondExp(10);
+                    updatePetUI();
+                };
+
+                document.querySelectorAll('.room-item').forEach(item => {
+                    item.onclick = () => {
+                        if (item.classList.contains('opacity-50')) return;
+                        openRoomWindow(item.dataset.name);
+                    };
+                });
+                
+                document.getElementById('set-bg-mar').onclick = () => setWallpaper('bg-mar-abierto');
+                document.getElementById('set-bg-atardecer').onclick = () => setWallpaper('bg-atardecer');
+                document.getElementById('set-bg-noche').onclick = () => setWallpaper('bg-noche-tranquila');
+                document.getElementById('set-bg-crew-1').onclick = () => setWallpaper('bg-crew-1');
+                document.getElementById('set-bg-crew-2').onclick = () => setWallpaper('bg-crew-2');
+                document.getElementById('set-bg-luffy-epic').onclick = () => setWallpaper('bg-luffy-epic');
+                document.getElementById('set-bg-map').onclick = () => setWallpaper('bg-mapa-interactivo');
+                document.getElementById('set-cursor-default').onclick = () => setCursor('default');
+                document.getElementById('set-cursor-luffy-flag').onclick = () => setCursor('cursor-luffy-flag');
+                document.getElementById('set-cursor-luffy-hat').onclick = () => setCursor('cursor-luffy-hat');
+                document.getElementById('set-cursor-law-sword').onclick = () => setCursor('cursor-law-sword');
+                document.getElementById('set-cursor-luffy-gear2').onclick = () => setCursor('cursor-luffy-gear2');
+                
+                updateBerries(100);
+                updatePetUI();
+                setWallpaper('bg-mar-abierto');
+                
+                // Cargar cursor guardado o usar default
+                const savedCursor = localStorage.getItem('nakama-cursor') || 'default';
+                setCursor(savedCursor);
+                
+                initBuddies();
+            }
+            
+            init();
+        });
+    </script>
+</body>
+</html>

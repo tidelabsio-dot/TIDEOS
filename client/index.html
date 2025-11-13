@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIDE OS Genesis - Portal de Entrada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            color: #fdf2e3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Estrellas de fondo */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #facc15;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .logo-container {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        @font-face {
+            font-family: 'Compressa VF';
+            src: url('https://res.cloudinary.com/dr6lvwubh/raw/upload/v1529908256/CompressaPRO-GX.woff2');
+            font-style: normal;
+        }
+
+        .text-pressure-title {
+            font-family: 'Compressa VF', monospace;
+            text-transform: uppercase;
+            margin: 0;
+            text-align: center;
+            user-select: none;
+            white-space: nowrap;
+            font-weight: 100;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .text-pressure-title span {
+            display: inline-block;
+            position: relative;
+            color: #5B5FFF;
+        }
+
+        .text-pressure-title span::after {
+            content: attr(data-char);
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: transparent;
+            z-index: -1;
+            -webkit-text-stroke-width: 3px;
+            -webkit-text-stroke-color: #00FF00;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            color: #facc15;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #581c0d 0%, #7c2d12 100%);
+            border: 4px solid #facc15;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(250, 204, 21, 0.4), 0 10px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-decoration: none;
+            color: #fdf2e3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(250, 204, 21, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+            animation: pulse 2s infinite;
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.08) rotate(1deg);
+            box-shadow: 0 0 60px rgba(250, 204, 21, 1), 0 20px 40px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(250, 204, 21, 0.2);
+            border-color: #fff;
+            border-width: 5px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px #facc15);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.2) rotate(10deg);
+            filter: drop-shadow(0 0 20px #facc15) drop-shadow(0 0 30px #f59e0b);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            text-align: center;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <div class="container">
+        <div class="logo-container" id="logo-container">
+            <h1 class="text-pressure-title" id="text-pressure-title" style="font-size: 80px; line-height: 1; transform: scale(1, 1); transform-origin: center top;">
+                <span data-char="T" style="font-variation-settings: 'wght' 400, 'wdth' 100, 'ital' 0;">T</span><span data-char="I" style="font-variation-settings: 'wght' 400, 'wdth' 100, 'ital' 0;">I</span><span data-char="D" style="font-variation-settings: 'wght' 400, 'wdth' 100, 'ital' 0;">D</span><span data-char="E" style="font-variation-settings: 'wght' 400, 'wdth' 100, 'ital' 0;">E</span><span data-char="L" style="font-variation-settings: 'wght' 400, 'wdth' 100, 'ital' 0;">L</span><span data-char="A" style="font-variation-settings: 'wght' 400, 'wdth' 100, 'ital' 0;">A</span><span data-char="B" style="font-variation-settings: 'wght' 400, 'wdth' 100, 'ital' 0;">B</span><span data-char="S" style="font-variation-settings: 'wght' 400, 'wdth' 100, 'ital' 0;">S</span>
+            </h1>
+        </div>
+        <div class="subtitle">El Galeón Digital - Navegación Web3</div>
+
+        <div class="cards-container">
+            <div id="nakama-card" class="card" style="opacity: 0.5; cursor: not-allowed; position: relative;">
+                <div style="position: absolute; top: 10px; right: 10px; font-size: 2rem;">🔒</div>
+                <div class="card-icon">🏴‍☠️</div>
+                <div class="card-title">NAKAMA OS</div>
+                <div class="card-description">
+                    Sistema Operativo Pirata<br>
+                    Edición Rey de los Piratas<br>
+                    <strong>🔒 BLOQUEADO</strong><br>
+                    <small style="opacity: 0.7;">Usa el código secreto...</small>
+                </div>
+            </div>
+
+            <a href="/genesis_mint_platform.html" class="card">
+                <div class="card-icon">💎</div>
+                <div class="card-title">GENESIS MINT</div>
+                <div class="card-description">
+                    Plataforma de Minteo NFT<br>
+                    Casetes Limitados<br>
+                    <strong>¡Consigue tu tesoro!</strong>
+                </div>
+            </a>
+
+            <a href="/tunova_con_radio_pirata.html" class="card">
+                <div class="card-icon">📻</div>
+                <div class="card-title">TUNOVA.IO</div>
+                <div class="card-description">
+                    Plataforma Musical Web3<br>
+                    Radio Pirata Incluida<br>
+                    <strong>¡Escucha los hits!</strong>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        © TIDElabs
+    </div>
+
+    <script>
+        // Generar estrellas aleatorias
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // TextPressure effect
+        const titleEl = document.getElementById('text-pressure-title');
+        const containerEl = document.getElementById('logo-container');
+        const spans = titleEl.querySelectorAll('span');
+        
+        const mouse = { x: 0, y: 0 };
+        const cursor = { x: 0, y: 0 };
+        
+        const dist = (a, b) => {
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        };
+        
+        window.addEventListener('mousemove', e => {
+            cursor.x = e.clientX;
+            cursor.y = e.clientY;
+        });
+        
+        window.addEventListener('touchmove', e => {
+            const t = e.touches[0];
+            cursor.x = t.clientX;
+            cursor.y = t.clientY;
+        }, { passive: false });
+        
+        // Initialize mouse position
+        const rect = containerEl.getBoundingClientRect();
+        mouse.x = rect.left + rect.width / 2;
+        mouse.y = rect.top + rect.height / 2;
+        cursor.x = mouse.x;
+        cursor.y = mouse.y;
+        
+        function animate() {
+            mouse.x += (cursor.x - mouse.x) / 15;
+            mouse.y += (cursor.y - mouse.y) / 15;
+            
+            const titleRect = titleEl.getBoundingClientRect();
+            const maxDist = titleRect.width / 2;
+            
+            spans.forEach(span => {
+                const rect = span.getBoundingClientRect();
+                const charCenter = {
+                    x: rect.x + rect.width / 2,
+                    y: rect.y + rect.height / 2
+                };
+                
+                const d = dist(mouse, charCenter);
+                
+                const getAttr = (distance, minVal, maxVal) => {
+                    const val = maxVal - Math.abs((maxVal * distance) / maxDist);
+                    return Math.max(minVal, val + minVal);
+                };
+                
+                const wdth = Math.floor(getAttr(d, 5, 200));
+                const wght = Math.floor(getAttr(d, 100, 900));
+                const italVal = getAttr(d, 0, 1).toFixed(2);
+                
+                span.style.fontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+
+        // Konami Code para desbloquear NAKAMA OS
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        const nakamaCard = document.getElementById('nakama-card');
+
+        // Verificar si ya está desbloqueado
+        if (localStorage.getItem('nakamaUnlocked') === 'true') {
+            unlockNakama();
+        }
+
+        function unlockNakama() {
+            // Crear efecto de explosión de partículas
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'fixed';
+                particle.style.left = nakamaCard.getBoundingClientRect().left + nakamaCard.offsetWidth / 2 + 'px';
+                particle.style.top = nakamaCard.getBoundingClientRect().top + nakamaCard.offsetHeight / 2 + 'px';
+                particle.style.width = '10px';
+                particle.style.height = '10px';
+                particle.style.borderRadius = '50%';
+                particle.style.background = ['#facc15', '#f59e0b', '#fff', '#ff0000'][Math.floor(Math.random() * 4)];
+                particle.style.pointerEvents = 'none';
+                particle.style.zIndex = '1000';
+                const angle = (Math.PI * 2 * i) / 50;
+                const velocity = 5 + Math.random() * 10;
+                particle.style.transition = 'all 1.5s cubic-bezier(0, .9, .57, 1)';
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.style.left = (parseFloat(particle.style.left) + Math.cos(angle) * velocity * 30) + 'px';
+                    particle.style.top = (parseFloat(particle.style.top) + Math.sin(angle) * velocity * 30) + 'px';
+                    particle.style.opacity = '0';
+                }, 10);
+                
+                setTimeout(() => particle.remove(), 1600);
+            }
+            
+            // Efecto de flash en toda la pantalla
+            const flash = document.createElement('div');
+            flash.style.position = 'fixed';
+            flash.style.top = '0';
+            flash.style.left = '0';
+            flash.style.width = '100vw';
+            flash.style.height = '100vh';
+            flash.style.background = '#facc15';
+            flash.style.opacity = '0.8';
+            flash.style.zIndex = '999';
+            flash.style.pointerEvents = 'none';
+            flash.style.transition = 'opacity 0.5s ease';
+            document.body.appendChild(flash);
+            setTimeout(() => flash.style.opacity = '0', 100);
+            setTimeout(() => flash.remove(), 600);
+            
+            // Actualizar la tarjeta
+            setTimeout(() => {
+                nakamaCard.style.opacity = '1';
+                nakamaCard.style.cursor = 'pointer';
+                nakamaCard.querySelector('div[style*="position: absolute"]').innerHTML = '✅';
+                nakamaCard.querySelector('strong').innerHTML = '✅ DESBLOQUEADO';
+                nakamaCard.querySelector('small').innerHTML = '¡Bienvenido, Nakama!';
+                nakamaCard.onclick = () => window.location.href = '/nakama-os.html';
+                nakamaCard.style.animation = 'glow 1s ease-in-out 3, pulse 2s infinite';
+            }, 300);
+            
+            localStorage.setItem('nakamaUnlocked', 'true');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.key);
+            if (konamiCode.length > 10) konamiCode.shift();
+            
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                if (localStorage.getItem('nakamaUnlocked') !== 'true') {
+                    alert('🏴‍☠️ ¡CÓDIGO NAKAMA ACTIVADO! NAKAMA OS desbloqueado. ¡Eres un verdadero pirata! ⚓');
+                    unlockNakama();
+                } else {
+                    alert('🏴‍☠️ ¡Ya eres un Nakama! El NAKAMA OS ya está desbloqueado. ⚓');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

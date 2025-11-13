@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENESIS - Plataforma de Mint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @font-face {
+            font-family: 'MS Sans Serif';
+            src: url('assets/fonts/MS-Sans-Serif.ttf') format('truetype');
+        }
+        body {
+            font-family: 'MS Sans Serif', sans-serif;
+            background-color: #000000;
+            color: #39FF14; /* Neon Green */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .retro-border {
+            border: 2px solid #39FF14;
+            box-shadow: 0 0 10px #39FF14, inset 0 0 10px #39FF14;
+        }
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 1px,
+                rgba(0, 0, 0, 0.3) 1px,
+                rgba(0, 0, 0, 0.3) 2px
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+        .mint-button {
+            background-color: #FF00FF; /* Neon Pink */
+            color: #000000;
+            border: 2px solid #39FF14;
+            box-shadow: 0 0 10px #FF00FF;
+            transition: all 0.1s;
+        }
+        .mint-button:hover {
+            background-color: #39FF14;
+            box-shadow: 0 0 15px #39FF14;
+            color: #000000;
+        }
+        .mint-button:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+        .cassette-card {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00FFFF; /* Neon Cyan */
+            box-shadow: 0 0 5px #00FFFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    <div class="p-4 h-screen flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+            <a href="/" class="text-3xl hover:scale-110 transition-transform text-[#39FF14]" title="Volver al inicio" style="text-shadow: 0 0 10px #39FF14;">←</a>
+            <h1 class="text-2xl font-bold text-center retro-border p-2 bg-black/50 flex-grow mx-4">
+                🏴‍☠️ GENESIS - PLATAFORMA DE MINT DE CASETES NFT LIMITADOS
+            </h1>
+            <div class="w-12"></div>
+        </div>
+
+        <div class="flex-grow overflow-y-auto p-4 retro-border bg-black/70">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Tarjeta de Casete 1: Vah0m4n -->
+                <div id="cassette-1" class="cassette-card p-4 rounded-lg">
+                    <h2 class="text-xl font-bold mb-2 text-[#FFB900]">Vah0m4n - Rey de los Emprendedores</h2>
+                    <p class="text-sm mb-3">**EDICIÓN LIMITADA:** <span id="mint-count-1">0</span> / 1000</p>
+                    <p class="text-xs mb-4">Mintea este casete NFT para obtener un **multiplicador de 1.5x** en tu Airdrop y **royalties compartidos** de la colección.</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-lg font-bold">Precio: 0.05 ETH</span>
+                        <span id="status-1" class="text-sm font-bold text-red-500">AGOTADO</span>
+                    </div>
+                    <button id="mint-btn-1" class="mint-button w-full py-2 rounded-md text-sm font-bold cursor-not-allowed opacity-50" disabled>
+                        MINT (AGOTADO)
+                    </button>
+                </div>
+
+                <!-- Tarjeta de Casete 2: Nakamas Crew -->
+                <div id="cassette-2" class="cassette-card p-4 rounded-lg">
+                    <h2 class="text-xl font-bold mb-2 text-[#FF00FF]">NAKAMAS CREW - Genesis Vol.1</h2>
+                    <p class="text-sm mb-3">**EDICIÓN LIMITADA:** <span id="mint-count-2">42</span> / 500</p>
+                    <p class="text-xs mb-4">El casete de la comunidad. Obtén **royalties** de todas las ventas secundarias y acceso a contenido exclusivo en TUNOVA.IO.</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-lg font-bold">Precio: 0.08 ETH</span>
+                        <span id="status-2" class="text-sm font-bold text-[#39FF14]">DISPONIBLE</span>
+                    </div>
+                    <button id="mint-btn-2" class="mint-button w-full py-2 rounded-md text-sm font-bold">
+                        MINT AHORA
+                    </button>
+                </div>
+
+                <!-- Tarjeta de Casete 3: RazAzaR RAZA -->
+                <div id="cassette-3" class="cassette-card p-4 rounded-lg">
+                    <h2 class="text-xl font-bold mb-2 text-[#00FFFF]">RazAzaR: RAZA Edition</h2>
+                    <p class="text-sm mb-3">**EDICIÓN LIMITADA:** <span id="mint-count-3">250</span> / 250</p>
+                    <p class="text-xs mb-4">Brutalismo Elegante. Un NFT de arte generativo que desbloquea el tracklist completo y un **multiplicador de 2x** en el Airdrop.</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-lg font-bold">Precio: 0.1 ETH</span>
+                        <span id="status-3" class="text-sm font-bold text-red-500">AGOTADO</span>
+                    </div>
+                    <button id="mint-btn-3" class="mint-button w-full py-2 rounded-md text-sm font-bold cursor-not-allowed opacity-50" disabled>
+                        MINT (AGOTADO)
+                    </button>
+                </div>
+            </div>
+
+	            <div class="mt-8 p-4 retro-border bg-black/50">
+	                <h3 class="text-xl font-bold mb-2 text-[#39FF14]">¿Qué son los Royalties Compartidos?</h3>
+	                <p class="text-sm">Cada casete NFT minteado te convierte en co-propietario de una parte de los royalties generados por esa colección. Cuando el casete se vende en el mercado secundario, una porción de la tarifa de royalty se distribuye directamente a todos los minters originales. **Es tu parte del Tesoro Pirata.**</p>
+	            </div>
+
+	            <!-- Sección de Votación/Likes para Videoclip -->
+	            <div class="mt-8 p-4 retro-border bg-black/50">
+	                <h3 class="text-xl font-bold mb-4 text-[#FF00FF]">VOTACIÓN: ¿Qué casete merece un Videoclip?</h3>
+	                <p class="text-sm mb-4">¡Tu voto cuenta! El casete con más likes será financiado para un videoclip profesional. Conecta tu wallet para votar.</p>
+	                
+	                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+	                    <!-- Voto 1 -->
+	                    <div class="cassette-card p-3 text-center">
+	                        <h4 class="font-bold text-[#FFB900]">Vah0m4n</h4>
+	                        <p class="text-xs mb-2">Rey de los Emprendedores</p>
+	                        <p class="text-2xl font-bold text-[#39FF14]" id="likes-1">12,450</p>
+	                        <p class="text-xs mb-2">LIKES</p>
+	                        <button class="mint-button w-full py-1 rounded-md text-sm font-bold mt-2 hover:bg-[#FF00FF] hover:text-black" onclick="simulateLike(1)">
+	                            👍 Votar
+	                        </button>
+	                    </div>
+	                    <!-- Voto 2 -->
+	                    <div class="cassette-card p-3 text-center">
+	                        <h4 class="font-bold text-[#FF00FF]">NAKAMAS CREW</h4>
+	                        <p class="text-xs mb-2">Genesis Vol.1</p>
+	                        <p class="text-2xl font-bold text-[#39FF14]" id="likes-2">15,890</p>
+	                        <p class="text-xs mb-2">LIKES</p>
+	                        <button class="mint-button w-full py-1 rounded-md text-sm font-bold mt-2 hover:bg-[#FF00FF] hover:text-black" onclick="simulateLike(2)">
+	                            👍 Votar
+	                        </button>
+	                    </div>
+	                    <!-- Voto 3 -->
+	                    <div class="cassette-card p-3 text-center">
+	                        <h4 class="font-bold text-[#00FFFF]">RazAzaR</h4>
+	                        <p class="text-xs mb-2">Brutalismo Elegante</p>
+	                        <p class="text-2xl font-bold text-[#39FF14]" id="likes-3">9,120</p>
+	                        <p class="text-xs mb-2">LIKES</p>
+	                        <button class="mint-button w-full py-1 rounded-md text-sm font-bold mt-2 hover:bg-[#FF00FF] hover:text-black" onclick="simulateLike(3)">
+	                            👍 Votar
+	                        </button>
+	                    </div>
+	                </div>
+	            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lógica de simulación de Mint
+        document.getElementById('mint-btn-2').addEventListener('click', function() {
+            const status = document.getElementById('status-2');
+            const count = document.getElementById('mint-count-2');
+            
+            if (status.textContent === 'DISPONIBLE') {
+                status.textContent = 'MINTING...';
+                status.classList.remove('text-[#39FF14]');
+                status.classList.add('text-[#FFB900]');
+
+                setTimeout(() => {
+                    alert('¡Felicidades, NAKAMA! Has minteado tu casete NFT. Ahora tienes acceso a royalties y un Airdrop aumentado.');
+                    
+                    // Simular actualización de contador
+                    let currentCount = parseInt(count.textContent);
+                    count.textContent = currentCount + 1;
+
+                    status.textContent = 'MINTEADO';
+                    status.classList.remove('text-[#FFB900]');
+                    status.classList.add('text-[#00FFFF]');
+                    
+                    this.disabled = true;
+                    this.textContent = 'MINTEADO';
+                    this.classList.add('opacity-50', 'cursor-not-allowed');
+
+                }, 2000);
+            }
+        });
+	    </script>
+	    <script>
+	        // Lógica de simulación de Mint
+	        document.getElementById('mint-btn-2').addEventListener('click', function() {
+	            const status = document.getElementById('status-2');
+	            const count = document.getElementById('mint-count-2');
+	            
+	            if (status.textContent === 'DISPONIBLE') {
+	                status.textContent = 'MINTING...';
+	                status.classList.remove('text-[#39FF14]');
+	                status.classList.add('text-[#FFB900]');
+	
+	                setTimeout(() => {
+	                    alert('¡Felicidades, NAKAMA! Has minteado tu casete NFT. Ahora tienes acceso a royalties y un Airdrop aumentado.');
+	                    
+	                    // Simular actualización de contador
+	                    let currentCount = parseInt(count.textContent);
+	                    count.textContent = currentCount + 1;
+	
+	                    status.textContent = 'MINTEADO';
+	                    status.classList.remove('text-[#FFB900]');
+	                    status.classList.add('text-[#00FFFF]');
+	                    
+	                    this.disabled = true;
+	                    this.textContent = 'MINTEADO';
+	                    this.classList.add('opacity-50', 'cursor-not-allowed');
+	
+	                }, 2000);
+	            }
+	        });
+
+	        // Lógica de simulación de Votación
+	        function simulateLike(cassetteId) {
+	            const likesElement = document.getElementById('likes-' + cassetteId);
+	            let currentLikes = parseInt(likesElement.textContent.replace(/,/g, ''));
+	            
+	            // Simulación de voto único por sesión
+	            if (localStorage.getItem('voted_cassette_' + cassetteId)) {
+	                alert('Ya has votado por este casete en esta sesión.');
+	                return;
+	            }
+
+	            currentLikes += 1;
+	            likesElement.textContent = currentLikes.toLocaleString();
+	            localStorage.setItem('voted_cassette_' + cassetteId, 'true');
+	            alert('¡Voto registrado! Gracias por participar.');
+	        }
+	    </script>
+	</body>
+</html>
